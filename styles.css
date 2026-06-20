@@ -432,7 +432,8 @@ body {
   background: var(--accent-soft);
 }
 
-body[data-page="login"] .auth-error.auth-success {
+body[data-page="login"] .auth-error.auth-success,
+body[data-page="reset-password"] .auth-error.auth-success {
   border-color: rgba(0, 230, 118, 0.35);
 }
 
@@ -441,31 +442,17 @@ body[data-page="login"] .auth-error.auth-success {
   text-align: right;
 }
 
-.login-forgot-btn,
-.login-back-login-btn {
+.login-forgot-btn {
+  display: inline-block;
   padding: 0;
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--exercise-light);
+  text-decoration: none;
 }
 
-.login-forgot-btn:hover,
-.login-back-login-btn:hover {
+.login-forgot-btn:hover {
   text-decoration: underline;
-}
-
-#reset-back-row {
-  margin-top: 16px;
-  padding-top: 0;
-  border-top: none;
-}
-
-.login-form-title.hidden,
-.login-form-subtitle.hidden,
-.login-auth-switch.hidden,
-.login-tutorial-link.hidden,
-.login-forgot-row.hidden {
-  display: none;
 }
 
 .profile-close-guest {
@@ -566,6 +553,7 @@ body[data-page="login"] .auth-error.auth-success {
 
 body[data-page="login"],
 body[data-page="register"],
+body[data-page="reset-password"],
 body[data-page="tutorial"] {
   padding: 0;
   min-height: 100vh;
@@ -660,7 +648,8 @@ body[data-page="tutorial"] {
 }
 
 body[data-page="login"] .login-card,
-body[data-page="register"] .login-card {
+body[data-page="register"] .login-card,
+body[data-page="reset-password"] .login-card {
   background: transparent;
   border: none;
   box-shadow: none;
@@ -668,16 +657,19 @@ body[data-page="register"] .login-card {
 }
 
 body[data-page="login"] .login-form-title,
-body[data-page="register"] .login-form-title {
+body[data-page="register"] .login-form-title,
+body[data-page="reset-password"] .login-form-title {
   color: var(--header-text);
 }
 
-body[data-page="register"] .login-form-subtitle {
+body[data-page="register"] .login-form-subtitle,
+body[data-page="reset-password"] .login-form-subtitle {
   color: var(--header-muted);
 }
 
 body[data-page="login"] .login-auth-switch,
-body[data-page="register"] .login-auth-switch {
+body[data-page="register"] .login-auth-switch,
+body[data-page="reset-password"] .login-auth-switch {
   border-top: none;
   color: var(--header-muted);
 }
@@ -1152,19 +1144,22 @@ body[data-page="tutorial"] .tutorial-steps-numbered li::before {
 }
 
 body[data-page="login"] #auth-view,
-body[data-page="register"] #auth-view {
+body[data-page="register"] #auth-view,
+body[data-page="reset-password"] #auth-view {
   padding: 0;
 }
 
 body[data-page="login"] .login-auth-form,
-body[data-page="register"] .login-auth-form {
+body[data-page="register"] .login-auth-form,
+body[data-page="reset-password"] .login-auth-form {
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
 body[data-page="login"] .login-auth-form .field label,
-body[data-page="register"] .login-auth-form .field label {
+body[data-page="register"] .login-auth-form .field label,
+body[data-page="reset-password"] .login-auth-form .field label {
   font-size: 0.8125rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -1180,7 +1175,8 @@ body[data-page="register"] .login-auth-form .field label {
   color: var(--header-muted);
 }
 
-body[data-page="register"] .login-auth-form input {
+body[data-page="register"] .login-auth-form input,
+body[data-page="reset-password"] .login-auth-form input {
   padding: 14px 16px;
   font-size: 1rem;
   border-radius: var(--radius-sm);
@@ -1232,14 +1228,16 @@ body[data-page="login"] .login-auth-form input:-webkit-autofill:focus {
 
 body[data-page="login"] .login-auth-form input:focus,
 body[data-page="register"] .login-auth-form input:focus,
-body[data-page="register"] .login-auth-form select:focus {
+body[data-page="register"] .login-auth-form select:focus,
+body[data-page="reset-password"] .login-auth-form input:focus {
   outline: none;
   border-color: var(--exercise);
   box-shadow: 0 0 0 3px rgba(0, 176, 255, 0.18);
 }
 
 body[data-page="login"] .login-submit,
-body[data-page="register"] .login-submit {
+body[data-page="register"] .login-submit,
+body[data-page="reset-password"] .login-submit {
   margin-top: 8px;
   padding: 16px 24px;
   font-family: var(--font-display);
@@ -1252,13 +1250,15 @@ body[data-page="register"] .login-submit {
 }
 
 body[data-page="login"] .login-submit:hover,
-body[data-page="register"] .login-submit:hover {
+body[data-page="register"] .login-submit:hover,
+body[data-page="reset-password"] .login-submit:hover {
   transform: translateY(-1px);
   box-shadow: 0 12px 28px rgba(0, 200, 83, 0.42);
 }
 
 body[data-page="login"] .auth-error,
-body[data-page="register"] .auth-error {
+body[data-page="register"] .auth-error,
+body[data-page="reset-password"] .auth-error {
   padding: 14px 16px;
   font-size: 0.875rem;
   border-radius: var(--radius-sm);

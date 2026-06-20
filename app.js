@@ -1067,7 +1067,7 @@ function saveLanguage(lang) {
     document.getElementById("reg-work-type")?.value || inferWorkTypeFromActivityLevel(regActivitySelect?.value || "moderate")
   );
   if (PAGE === "login") renderSubscriptionSection();
-  if (PAGE === "login" || PAGE === "register" || PAGE === "tutorial") {
+  if (PAGE === "login" || PAGE === "register" || PAGE === "reset-password" || PAGE === "tutorial") {
     applyPageTranslations();
     return;
   }
@@ -1890,19 +1890,6 @@ function clearAuthError() {
   authErrorEl.classList.remove("auth-success");
 }
 
-function switchLoginAuthView(mode) {
-  const isReset = mode === "reset";
-  loginForm?.classList.toggle("hidden", isReset);
-  resetPasswordForm?.classList.toggle("hidden", !isReset);
-  document.getElementById("login-forgot-row")?.classList.toggle("hidden", isReset);
-  document.getElementById("login-register-switch")?.classList.toggle("hidden", isReset);
-  document.getElementById("login-tutorial-link")?.classList.toggle("hidden", isReset);
-  document.getElementById("reset-back-row")?.classList.toggle("hidden", !isReset);
-  document.getElementById("reset-form-subtitle")?.classList.toggle("hidden", !isReset);
-
-  clearAuthError();
-}
-
 function getCurrentPagePath() {
   const path = window.location.pathname;
   const file = path.substring(path.lastIndexOf("/") + 1) || "index.html";
@@ -1910,7 +1897,7 @@ function getCurrentPagePath() {
 }
 
 function isSafeRedirect(url) {
-  if (!url || url.includes("login.html") || url.includes("registrati.html")) return false;
+  if (!url || url.includes("login.html") || url.includes("registrati.html") || url.includes("reimposta-password.html")) return false;
   try {
     const resolved = new URL(url, window.location.href);
     return resolved.origin === window.location.origin;
@@ -1947,32 +1934,55 @@ function redirectAfterAuth() {
 }
 
 function requireAuth() {
-  if (PAGE === "login" || PAGE === "register" || PAGE === "tutorial") return;
+  if (PAGE === "login" || PAGE === "register" || PAGE === "reset-password" || PAGE === "tutorial") return;
   if (getCurrentUserId()) return;
   const redirect = encodeURIComponent(getCurrentPagePath());
   window.location.replace(`login.html?redirect=${redirect}`);
 }
 
 function requireSubscription() {
-  if (PAGE === "login" || PAGE === "register" || PAGE === "tutorial") return;
+  if (PAGE === "login" || PAGE === "register" || PAGE === "reset-password" || PAGE === "tutorial") return;
   const user = getCurrentUser();
   if (!user || isSubscriptionActive(user)) return;
   window.location.replace(getSubscriptionGateUrl(getCurrentPagePath()));
 }
 
 function isAuthPage() {
-  return PAGE === "login" || PAGE === "register";
+  return PAGE === "login" || PAGE === "register" || PAGE === "reset-password";
+}
+
+function getAuthPageQuerySuffix() {
+  const redirect = new URLSearchParams(window.location.search).get("redirect");
+  return redirect && isSafeRedirect(redirect) ? `?redirect=${encodeURIComponent(redirect)}` : "";
 }
 
 function wireAuthPageLinks() {
-  const redirect = new URLSearchParams(window.location.search).get("redirect");
-  const suffix = redirect && isSafeRedirect(redirect) ? `?redirect=${encodeURIComponent(redirect)}` : "";
+  const suffix = getAuthPageQuerySuffix();
 
   const registerLink = document.getElementById("register-page-link");
   if (registerLink) registerLink.href = `registrati.html${suffix}`;
 
   const loginLink = document.getElementById("login-page-link");
   if (loginLink) loginLink.href = `login.html${suffix}`;
+
+  const forgotLink = document.getElementById("forgot-password-link");
+  if (forgotLink) {
+    const params = new URLSearchParams(window.location.search);
+    const email = document.getElementById("login-email")?.value.trim();
+    if (email) params.set("email", email);
+    const query = params.toString();
+    forgotLink.href = `reimposta-password.html${query ? `?${query}` : ""}`;
+  }
+}
+
+function wireForgotPasswordLink() {
+  const emailInput = document.getElementById("login-email");
+  const forgotLink = document.getElementById("forgot-password-link");
+  if (!emailInput || !forgotLink) return;
+
+  const updateForgotLink = () => wireAuthPageLinks();
+  emailInput.addEventListener("input", updateForgotLink);
+  updateForgotLink();
 }
 
 function switchAuthTab(tab) {
@@ -5146,21 +5156,6 @@ loginForm?.addEventListener("submit", async (event) => {
   }
 });
 
-document.getElementById("forgot-password-btn")?.addEventListener("click", () => {
-  const loginEmail = document.getElementById("login-email")?.value.trim();
-  switchLoginAuthView("reset");
-  if (loginEmail) {
-    const resetEmailInput = document.getElementById("reset-email");
-    if (resetEmailInput) resetEmailInput.value = loginEmail;
-  }
-  document.getElementById("reset-name")?.focus();
-});
-
-document.getElementById("back-to-login-btn")?.addEventListener("click", () => {
-  resetPasswordForm?.reset();
-  switchLoginAuthView("login");
-});
-
 resetPasswordForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   clearAuthError();
@@ -5172,12 +5167,10 @@ resetPasswordForm?.addEventListener("submit", async (event) => {
       document.getElementById("reset-password").value,
       document.getElementById("reset-password-confirm").value
     );
-    resetPasswordForm.reset();
-    switchLoginAuthView("login");
-    const loginEmailInput = document.getElementById("login-email");
-    if (loginEmailInput) loginEmailInput.value = email.trim();
-    document.getElementById("login-password")?.focus();
-    showAuthSuccess(t("auth.resetSuccess"));
+    const params = new URLSearchParams({ reset: "1", email: email.trim() });
+    const redirect = new URLSearchParams(window.location.search).get("redirect");
+    if (redirect && isSafeRedirect(redirect)) params.set("redirect", redirect);
+    window.location.href = `login.html?${params.toString()}`;
   } catch (error) {
     showAuthError(error.message);
   }
@@ -5566,6 +5559,18 @@ function initLoginPage() {
 
   initAuthLanguageSelect();
   wireAuthPageLinks();
+  wireForgotPasswordLink();
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("reset") === "1") {
+    const resetEmail = params.get("email")?.trim();
+    if (resetEmail) {
+      const loginEmailInput = document.getElementById("login-email");
+      if (loginEmailInput) loginEmailInput.value = resetEmail;
+    }
+    showAuthSuccess(t("auth.resetSuccess"));
+    document.getElementById("login-password")?.focus();
+  }
 
   const wireSubscriptionButtons = () => {
     document.getElementById("start-trial-btn")?.addEventListener("click", () => requestSubscriptionPlan("trial"));
@@ -5623,6 +5628,26 @@ function initRegisterPage() {
   wireAuthPageLinks();
 }
 
+function initResetPasswordPage() {
+  if (PAGE !== "reset-password") return;
+
+  if (getCurrentUserId()) {
+    redirectAfterAuth();
+    return;
+  }
+
+  initAuthLanguageSelect();
+  wireAuthPageLinks();
+
+  const params = new URLSearchParams(window.location.search);
+  const presetEmail = params.get("email")?.trim();
+  if (presetEmail) {
+    const resetEmailInput = document.getElementById("reset-email");
+    if (resetEmailInput) resetEmailInput.value = presetEmail;
+  }
+  document.getElementById("reset-name")?.focus();
+}
+
 async function bootstrapApp() {
   try {
     await initUserDatabase();
@@ -5644,6 +5669,11 @@ async function bootstrapApp() {
 
   if (PAGE === "register") {
     initRegisterPage();
+    return;
+  }
+
+  if (PAGE === "reset-password") {
+    initResetPasswordPage();
     return;
   }
 

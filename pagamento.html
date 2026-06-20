@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Opzionale: URL del server Stripe in produzione -->
+    <!-- <meta name="stripe-api-base" content="https://tuo-server.onrender.com" /> -->
+    <!-- Opzionale: chiave pubblica Stripe (pk_test_... / pk_live_...) -->
+    <!-- <meta name="stripe-publishable-key" content="pk_test_..." /> -->
+    <title>DaD — Pagamento</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="payment" data-i18n-page-title="page.paymentTitle">
+    <div class="app">
+      <header class="header">
+        <div class="brand">
+          <span class="brand-logo" aria-hidden="true">DaD</span>
+          <div>
+            <h1 data-i18n-page-heading="page.payment">Pagamento</h1>
+            <p class="subtitle" data-i18n="pay.pageDesc">Abbonamento e metodo di pagamento</p>
+          </div>
+        </div>
+      </header>
+
+      <main class="page-main">
+        <section class="user-page-card" id="profile-payment-section" aria-labelledby="profile-payment-title">
+          <div class="user-section-head">
+            <h2 class="user-section-title" id="profile-payment-title" data-i18n="pay.title">Abbonamento e pagamento</h2>
+            <p class="user-section-desc" data-i18n="pay.desc">Stato piano, metodo di pagamento e gestione abbonamento.</p>
+          </div>
+
+          <div class="profile-payment-card">
+            <div class="profile-payment-status">
+              <span class="subscription-status-badge hidden" id="profile-payment-badge"></span>
+            </div>
+
+            <div class="profile-payment-grid">
+              <div class="profile-payment-row">
+                <span class="profile-payment-label" data-i18n="pay.planLabel">Piano</span>
+                <strong class="profile-payment-value" id="profile-payment-plan">—</strong>
+              </div>
+              <div class="profile-payment-row">
+                <span class="profile-payment-label" data-i18n="pay.expiryLabel">Scadenza</span>
+                <strong class="profile-payment-value" id="profile-payment-expiry">—</strong>
+              </div>
+              <div class="profile-payment-row profile-payment-method-row">
+                <span class="profile-payment-label" data-i18n="pay.methodLabel">Metodo di pagamento</span>
+                <strong class="profile-payment-value" id="profile-payment-method">—</strong>
+              </div>
+              <p class="profile-payment-method-meta hidden" id="profile-payment-method-meta"></p>
+            </div>
+
+            <p class="field-hint profile-payment-note" id="profile-payment-note"></p>
+            <p class="auth-error hidden profile-payment-status-note" id="profile-payment-status-note" role="status"></p>
+
+            <div class="profile-payment-wallet hidden" id="profile-payment-wallet">
+              <p class="profile-payment-wallet-label" data-i18n="pay.walletTitle">Paga in un click</p>
+              <div id="express-checkout-element" class="express-checkout-element"></div>
+              <p class="field-hint profile-payment-wallet-hint" data-i18n="pay.walletHint">
+                Google Pay e Apple Pay sono gestiti in modo sicuro da Stripe.
+              </p>
+            </div>
+
+            <div class="profile-payment-actions">
+              <button type="button" class="btn-secondary hidden" id="profile-start-trial-btn" data-i18n="sub.trialCta">Inizia prova gratuita</button>
+              <button type="button" class="btn-primary hidden" id="profile-start-monthly-btn" data-i18n="sub.monthlyCta">Abbonati a €4,99</button>
+              <button type="button" class="btn-text hidden" id="profile-manage-payment-btn" data-i18n="pay.manageMethod">Gestisci metodo di pagamento</button>
+              <button type="button" class="btn-text hidden" id="profile-manage-subscription-btn" data-i18n="sub.manageSubscription">Gestisci abbonamento</button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav bottom-nav-7" data-i18n-aria="nav.main" aria-label="Navigazione principale">
+        <a href="utente.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">👤</span>
+          <span data-i18n="nav.profile">Profilo</span>
+        </a>
+        <a href="pagamento.html" class="bottom-nav-link active" aria-current="page">
+          <span class="bottom-nav-icon" aria-hidden="true">💳</span>
+          <span data-i18n="nav.payment">Pagamento</span>
+        </a>
+        <a href="riepilogo.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">📊</span>
+          <span data-i18n="nav.overview">Riepilogo</span>
+        </a>
+        <a href="index.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">⚡</span>
+          <span data-i18n="nav.today">Oggi</span>
+        </a>
+        <a href="domani.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">🎯</span>
+          <span data-i18n="nav.tomorrow">Domani</span>
+        </a>
+        <a href="settimana.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">🏆</span>
+          <span data-i18n="nav.week">Settimana</span>
+        </a>
+        <a href="dati-totali.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">📈</span>
+          <span data-i18n="nav.totals">Totali</span>
+        </a>
+      </nav>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="i18n.js"></script>
+    <script src="catalog-i18n.js"></script>
+    <script src="users-db.js"></script>
+    <script src="stripe-config.js"></script>
+    <script src="payment-stripe.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

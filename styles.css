@@ -2227,6 +2227,10 @@ h2 {
   grid-template-columns: repeat(6, 1fr);
 }
 
+.bottom-nav-7 {
+  grid-template-columns: repeat(7, 1fr);
+}
+
 .bottom-nav-6 .bottom-nav-link {
   font-size: 0.68rem;
   padding: 8px 0;
@@ -2235,6 +2239,21 @@ h2 {
 
 .bottom-nav-6 .bottom-nav-icon {
   font-size: 1rem;
+}
+
+.bottom-nav-7 .bottom-nav-link {
+  font-size: 0.62rem;
+  padding: 8px 0;
+  letter-spacing: 0.03em;
+}
+
+.bottom-nav-7 .bottom-nav-icon {
+  font-size: 0.95rem;
+}
+
+.bottom-nav-7 .bottom-nav-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
 }
 
 .bottom-nav-link {
@@ -4898,6 +4917,106 @@ body[data-page="user"] .subscription-plan-monthly {
   box-shadow: none;
 }
 
+.profile-payment-card {
+  display: grid;
+  gap: 16px;
+}
+
+.profile-payment-status {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.profile-payment-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.profile-payment-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-payment-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.profile-payment-value {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text);
+  text-align: right;
+}
+
+.profile-payment-method-meta {
+  margin: -4px 0 0;
+  padding: 0 14px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.profile-payment-method-meta.hidden {
+  display: none;
+}
+
+.profile-payment-note {
+  margin: 0;
+}
+
+.profile-payment-status-note {
+  margin: 0;
+}
+
+body[data-page="payment"] .profile-payment-status-note.auth-success {
+  border-color: rgba(0, 230, 118, 0.35);
+}
+
+.profile-payment-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile-payment-actions .btn-primary,
+.profile-payment-actions .btn-secondary {
+  width: 100%;
+}
+
+.profile-payment-wallet {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-payment-wallet.hidden {
+  display: none;
+}
+
+.profile-payment-wallet-label {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.profile-payment-wallet-hint {
+  margin: 0;
+}
+
+.express-checkout-element {
+  min-height: 44px;
+}
+
 body[data-page="user"] .user-form select {
   color: #ffffff;
   color-scheme: dark;
@@ -4908,4 +5027,27 @@ body[data-page="user"] .user-form select {
 body[data-page="user"] .user-form select option {
   background: var(--navy-deep);
   color: var(--text);
+}
+
+body[data-page="payment"] .user-page-card,
+body[data-page="payment"] .profile-payment-row,
+body[data-page="payment"] .subscription-status-badge {
+  border: none;
+}
+
+.profile-payment-page-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  text-align: center;
+}
+
+body[data-page="user"] .user-form-actions {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+body[data-page="user"] .user-form-actions .profile-payment-page-link {
+  flex: 1 1 100%;
 }

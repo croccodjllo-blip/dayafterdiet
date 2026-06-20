@@ -407,10 +407,12 @@ const NAV_PAGE_ICONS = {
   tomorrow: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M12 14v4"/><path d="M10 16h4"/></svg>`,
   week: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M7 14h2M11 14h2M15 14h2M7 17h2M11 17h2M15 17h2"/></svg>`,
   totals: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-9"/><path d="M17 5h4v4"/></svg>`,
+  payment: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>`,
 };
 
 const NAV_HREF_TO_PAGE = {
   "utente.html": "profile",
+  "pagamento.html": "payment",
   "riepilogo.html": "overview",
   "index.html": "today",
   "domani.html": "tomorrow",
@@ -1067,6 +1069,7 @@ function saveLanguage(lang) {
     document.getElementById("reg-work-type")?.value || inferWorkTypeFromActivityLevel(regActivitySelect?.value || "moderate")
   );
   if (PAGE === "login") renderSubscriptionSection();
+  if (PAGE === "payment") renderPaymentSection();
   if (PAGE === "login" || PAGE === "register" || PAGE === "reset-password" || PAGE === "tutorial") {
     applyPageTranslations();
     return;
@@ -4673,6 +4676,51 @@ function getStripeApiBase() {
   return String(window.STRIPE_CONFIG?.apiBase || "http://localhost:4242").replace(/\/$/, "");
 }
 
+function getStripeCheckoutReturnPaths() {
+  if (PAGE === "payment") {
+    return {
+      successPath: "pagamento.html?checkout=success&session_id={CHECKOUT_SESSION_ID}",
+      cancelPath: "pagamento.html?checkout=cancelled",
+    };
+  }
+  return {
+    successPath: "login.html?checkout=success&session_id={CHECKOUT_SESSION_ID}",
+    cancelPath: "login.html?checkout=cancelled",
+  };
+}
+
+async function checkStripeApiAvailable() {
+  try {
+    const response = await fetch(`${getStripeApiBase()}/api/health`, { method: "GET" });
+    if (!response.ok) return false;
+    const data = await response.json();
+    return Boolean(data?.ok && data?.stripe);
+  } catch {
+    return false;
+  }
+}
+
+let stripeApiAvailable = null;
+
+async function refreshStripeApiStatus() {
+  stripeApiAvailable = await checkStripeApiAvailable();
+  return stripeApiAvailable;
+}
+
+function showPaymentStatusNote(message, type = "error") {
+  const noteEl = document.getElementById("profile-payment-status-note");
+  if (!noteEl) return;
+  if (!message) {
+    noteEl.textContent = "";
+    noteEl.classList.add("hidden");
+    noteEl.classList.remove("auth-success");
+    return;
+  }
+  noteEl.textContent = message;
+  noteEl.classList.remove("hidden", "auth-success");
+  if (type === "success") noteEl.classList.add("auth-success");
+}
+
 function cleanCheckoutQueryParams() {
   const url = new URL(window.location.href);
   if (!url.searchParams.has("checkout") && !url.searchParams.has("session_id")) return;
@@ -4701,6 +4749,10 @@ async function applySubscriptionFromServer(data) {
   await persistUser(updated);
   usersById[user.id] = updated;
   renderSubscriptionSection();
+  renderPaymentSection();
+  if (PAGE === "payment") {
+    void refreshPaymentMethod().then(() => renderPaymentSection());
+  }
   return Boolean(data.active || data.subscriptionPlan);
 }
 
@@ -4714,7 +4766,7 @@ async function syncSubscriptionFromServer() {
     );
     if (!response.ok) return;
     const data = await response.json();
-    if (data.subscriptionPlan || data.stripeSubscriptionId) {
+    if (data.subscriptionPlan || data.stripeSubscriptionId || data.stripeCustomerId) {
       await applySubscriptionFromServer(data);
     }
   } catch {
@@ -4722,16 +4774,27 @@ async function syncSubscriptionFromServer() {
   }
 }
 
+async function persistStripeCustomerId(customerId) {
+  const user = getCurrentUser();
+  if (!user || !customerId || user.stripeCustomerId === customerId) return;
+  const updated = { ...user, stripeCustomerId: customerId };
+  await persistUser(updated);
+  usersById[user.id] = updated;
+}
+
 async function startStripeCheckout(plan = "monthly") {
   const user = getCurrentUser();
   if (!user) return false;
 
-  const monthlyBtn = document.getElementById("start-monthly-btn");
+  const monthlyBtn =
+    document.getElementById("start-monthly-btn") || document.getElementById("profile-start-monthly-btn");
   const originalLabel = monthlyBtn?.textContent;
   if (monthlyBtn) {
     monthlyBtn.disabled = true;
     monthlyBtn.textContent = t("sub.checkoutProcessing");
   }
+
+  const { successPath, cancelPath } = getStripeCheckoutReturnPaths();
 
   try {
     const response = await fetch(`${getStripeApiBase()}/api/create-checkout-session`, {
@@ -4742,12 +4805,15 @@ async function startStripeCheckout(plan = "monthly") {
         email: user.email,
         plan,
         locale: getLanguage(),
+        successPath,
+        cancelPath,
       }),
     });
 
     if (!response.ok) throw new Error("checkout_failed");
 
-    const { url } = await response.json();
+    const { url, stripeCustomerId } = await response.json();
+    if (stripeCustomerId) await persistStripeCustomerId(stripeCustomerId);
     if (!url) throw new Error("missing_checkout_url");
     window.location.href = url;
     return true;
@@ -4761,7 +4827,7 @@ async function startStripeCheckout(plan = "monthly") {
   }
 }
 
-async function openStripeCustomerPortal() {
+async function openStripeCustomerPortal(returnPath = "pagamento.html", flow = null) {
   const user = getCurrentUser();
   if (!user) return;
 
@@ -4769,15 +4835,25 @@ async function openStripeCustomerPortal() {
     const response = await fetch(`${getStripeApiBase()}/api/create-portal-session`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: user.id }),
+      body: JSON.stringify({
+        userId: user.id,
+        email: user.email,
+        returnPath,
+        flow,
+      }),
     });
     if (!response.ok) throw new Error("portal_failed");
-    const { url } = await response.json();
+    const { url, stripeCustomerId } = await response.json();
+    if (stripeCustomerId) await persistStripeCustomerId(stripeCustomerId);
     if (!url) throw new Error("missing_portal_url");
     window.location.href = url;
   } catch {
     alert(t("sub.portalError"));
   }
+}
+
+async function openStripePaymentMethodPortal() {
+  return openStripeCustomerPortal("pagamento.html", "payment_method_update");
 }
 
 async function handleCheckoutReturn() {
@@ -4806,7 +4882,10 @@ async function handleCheckoutReturn() {
     const data = await response.json();
     if (await applySubscriptionFromServer(data)) {
       alert(t("sub.monthlyStarted"));
-      if (PAGE === "login" && getCurrentUserId()) {
+      if (PAGE === "payment") {
+        await refreshPaymentMethod();
+        renderPaymentSection();
+      } else if (PAGE === "login" && getCurrentUserId()) {
         window.location.href = getPostAuthUrl();
       }
     }
@@ -4837,6 +4916,7 @@ async function activateSubscriptionTrial(silent = false) {
   usersById[user.id] = updated;
   if (!silent) alert(t("sub.trialStarted"));
   renderSubscriptionSection();
+  renderPaymentSection();
   if (isSubscriptionActive(updated) && (PAGE === "login" || isAuthPage())) {
     redirectAfterAuth();
   }
@@ -4951,6 +5031,159 @@ function renderSubscriptionSection() {
   updateLoginPageSessionUI();
 }
 
+let cachedPaymentMethod = null;
+
+function formatPaymentMethodBrand(brand) {
+  const labels = {
+    visa: "Visa",
+    mastercard: "Mastercard",
+    amex: "American Express",
+    discover: "Discover",
+    diners: "Diners Club",
+    jcb: "JCB",
+    unionpay: "UnionPay",
+  };
+  return labels[String(brand || "").toLowerCase()] || String(brand || "Card");
+}
+
+function formatPaymentMethodSummary(paymentData) {
+  if (!paymentData?.hasPaymentMethod) return t("pay.noMethod");
+  if (paymentData.wallet === "google_pay") {
+    return t("pay.methodGooglePay", { last4: paymentData.last4 || "????" });
+  }
+  if (paymentData.wallet === "apple_pay") {
+    return t("pay.methodApplePay", { last4: paymentData.last4 || "????" });
+  }
+  return t("pay.methodDisplay", {
+    brand: formatPaymentMethodBrand(paymentData.brand),
+    last4: paymentData.last4 || "????",
+  });
+}
+
+async function refreshPaymentMethod() {
+  const user = getCurrentUser();
+  if (!user?.id || PAGE !== "payment") {
+    cachedPaymentMethod = null;
+    return null;
+  }
+
+  try {
+    const response = await fetch(
+      `${getStripeApiBase()}/api/payment-method?userId=${encodeURIComponent(user.id)}`
+    );
+    if (!response.ok) {
+      cachedPaymentMethod = null;
+      return null;
+    }
+    cachedPaymentMethod = await response.json();
+  } catch {
+    cachedPaymentMethod = null;
+  }
+  return cachedPaymentMethod;
+}
+
+function renderPaymentSection(paymentData = cachedPaymentMethod) {
+  const section = document.getElementById("profile-payment-section");
+  if (!section) return;
+
+  const user = getCurrentUser();
+  if (PAGE !== "payment") return;
+  if (!user) return;
+
+  const badge = document.getElementById("profile-payment-badge");
+  const planEl = document.getElementById("profile-payment-plan");
+  const expiryEl = document.getElementById("profile-payment-expiry");
+  const methodEl = document.getElementById("profile-payment-method");
+  const methodMetaEl = document.getElementById("profile-payment-method-meta");
+  const noteEl = document.getElementById("profile-payment-note");
+  const trialBtn = document.getElementById("profile-start-trial-btn");
+  const monthlyBtn = document.getElementById("profile-start-monthly-btn");
+  const managePaymentBtn = document.getElementById("profile-manage-payment-btn");
+  const manageSubBtn = document.getElementById("profile-manage-subscription-btn");
+
+  const active = isSubscriptionActive(user);
+  const isMonthlyActive = active && user.subscriptionPlan === "monthly";
+  const hasStripeCustomer = Boolean(user.stripeCustomerId || user.stripeSubscriptionId);
+  const stripeOnline = stripeApiAvailable !== false;
+
+  if (stripeApiAvailable === false) {
+    showPaymentStatusNote(t("pay.stripeOffline"));
+  } else {
+    showPaymentStatusNote("");
+  }
+
+  badge?.classList.toggle("hidden", !active);
+  if (badge && active) badge.textContent = t("sub.active");
+
+  if (planEl) {
+    if (!active) planEl.textContent = t("pay.noSubscription");
+    else if (user.subscriptionPlan === "trial") planEl.textContent = t("sub.trialActive");
+    else planEl.textContent = t("sub.monthlyActive");
+  }
+
+  if (expiryEl) {
+    if (!active) {
+      expiryEl.textContent = "—";
+    } else {
+      const daysLeft = getSubscriptionDaysLeft(user);
+      expiryEl.textContent = `${formatSubscriptionDate(user.subscriptionExpiresAt)} · ${t("sub.daysLeft", { days: daysLeft })}`;
+    }
+  }
+
+  if (methodEl) {
+    if (!stripeOnline) {
+      methodEl.textContent = "—";
+    } else if (hasStripeCustomer) {
+      methodEl.textContent = formatPaymentMethodSummary(paymentData);
+    } else {
+      methodEl.textContent = t("pay.methodUnavailable");
+    }
+  }
+
+  if (methodMetaEl) {
+    if (paymentData?.hasPaymentMethod && paymentData.expMonth && paymentData.expYear) {
+      methodMetaEl.textContent = t("pay.methodExpiry", {
+        month: String(paymentData.expMonth).padStart(2, "0"),
+        year: String(paymentData.expYear),
+      });
+      methodMetaEl.classList.remove("hidden");
+    } else {
+      methodMetaEl.textContent = "";
+      methodMetaEl.classList.add("hidden");
+    }
+  }
+
+  if (noteEl) {
+    const parts = [];
+    if (!active) parts.push(t("sub.required"));
+    if (user.trialUsed && !active) parts.push(t("sub.trialUsed"));
+    if (stripeOnline && (isMonthlyActive || hasStripeCustomer)) parts.push(t("sub.paymentNote"));
+    else if (active) parts.push(t("pay.trialPaymentHint"));
+    noteEl.textContent = parts.join(" ");
+  }
+
+  trialBtn?.classList.toggle("hidden", active || Boolean(user.trialUsed) || !stripeOnline);
+  if (trialBtn) trialBtn.disabled = Boolean(user.trialUsed) || active;
+
+  monthlyBtn?.classList.toggle("hidden", isMonthlyActive || !stripeOnline);
+  if (monthlyBtn) {
+    monthlyBtn.disabled = isMonthlyActive || !stripeOnline;
+    monthlyBtn.textContent = t("sub.monthlyCta");
+  }
+
+  const showManagePayment = stripeOnline && hasStripeCustomer;
+  const showManageSubscription = stripeOnline && isMonthlyActive && hasStripeCustomer;
+
+  managePaymentBtn?.classList.toggle("hidden", !showManagePayment);
+  manageSubBtn?.classList.toggle("hidden", !showManageSubscription);
+
+  if (managePaymentBtn) {
+    managePaymentBtn.textContent = paymentData?.hasPaymentMethod
+      ? t("pay.manageMethod")
+      : t("pay.addMethod");
+  }
+}
+
 function updateLoginPageSessionUI() {
   if (PAGE !== "login") return;
 
@@ -5013,6 +5246,28 @@ function renderUserPage() {
   }
 
   populateSettingsForm();
+}
+
+function initPaymentPage() {
+  if (PAGE !== "payment") return;
+
+  renderPaymentSection();
+
+  void refreshStripeApiStatus().then(async (online) => {
+    if (online) {
+      await syncSubscriptionFromServer();
+      await refreshPaymentMethod();
+      await mountExpressCheckout();
+    }
+    renderPaymentSection();
+  });
+
+  document.getElementById("profile-start-trial-btn")?.addEventListener("click", () => requestSubscriptionPlan("trial"));
+  document.getElementById("profile-start-monthly-btn")?.addEventListener("click", () => requestSubscriptionPlan("monthly"));
+  document.getElementById("profile-manage-payment-btn")?.addEventListener("click", () => openStripePaymentMethodPortal());
+  document.getElementById("profile-manage-subscription-btn")?.addEventListener("click", () =>
+    openStripeCustomerPortal("pagamento.html")
+  );
 }
 
 function initUserPage() {
@@ -5099,6 +5354,10 @@ function render() {
 
   if (PAGE === "user") {
     renderUserPage();
+  }
+
+  if (PAGE === "payment") {
+    renderPaymentSection();
   }
 }
 
@@ -5575,7 +5834,9 @@ function initLoginPage() {
   const wireSubscriptionButtons = () => {
     document.getElementById("start-trial-btn")?.addEventListener("click", () => requestSubscriptionPlan("trial"));
     document.getElementById("start-monthly-btn")?.addEventListener("click", () => requestSubscriptionPlan("monthly"));
-    document.getElementById("subscription-manage-btn")?.addEventListener("click", openStripeCustomerPortal);
+    document.getElementById("subscription-manage-btn")?.addEventListener("click", () =>
+      openStripeCustomerPortal("login.html#abbonamento")
+    );
   };
 
   if (getCurrentUserId()) {
@@ -5691,6 +5952,7 @@ async function bootstrapApp() {
   initDayChangeMonitor();
   initTodayPage();
   initUserPage();
+  initPaymentPage();
   initWeekPage();
   render();
 }

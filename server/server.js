@@ -6,6 +6,7 @@ const Stripe = require("stripe");
 const store = require("./subscriptions-store");
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
 const stripePriceId = process.env.STRIPE_PRICE_ID;
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 const frontendUrl = (process.env.FRONTEND_URL || "http://localhost:5500").replace(/\/$/, "");
@@ -78,6 +79,40 @@ async function refreshSubscriptionFromStripe(userId) {
   return syncSubscriptionRecord(subscription, userId);
 }
 
+async function ensureStripeCustomer(userId, email) {
+  const existing = store.getByUserId(userId);
+  if (existing?.stripeCustomerId) return existing.stripeCustomerId;
+
+  const customer = await stripe.customers.create({
+    email: String(email || existing?.email || "").trim().toLowerCase(),
+    metadata: { userId },
+  });
+
+  store.upsert(userId, {
+    email: String(email || existing?.email || "").trim().toLowerCase() || null,
+    stripeCustomerId: customer.id,
+  });
+
+  return customer.id;
+}
+
+function buildFrontendUrl(path = "") {
+  const safePath = String(path || "").replace(/^\//, "");
+  return safePath ? `${frontendUrl}/${safePath}` : frontendUrl;
+}
+
+async function registerPaymentMethodDomain() {
+  try {
+    const hostname = new URL(frontendUrl).hostname;
+    if (!hostname || hostname === "localhost" || hostname === "127.0.0.1") return;
+    await stripe.paymentMethodDomains.create({ domain_name: hostname });
+  } catch (error) {
+    if (error?.code !== "resource_already_exists") {
+      console.warn("Payment method domain registration skipped:", error.message);
+    }
+  }
+}
+
 app.post(
   "/api/webhook",
   express.raw({ type: "application/json" }),
@@ -138,12 +173,14 @@ app.get("/api/health", (_req, res) => {
     ok: true,
     stripe: Boolean(stripeSecretKey),
     priceConfigured: Boolean(stripePriceId),
+    publishableKey: stripePublishableKey || null,
+    googlePayEnabled: true,
   });
 });
 
 app.post("/api/create-checkout-session", async (req, res) => {
   try {
-    const { userId, email, plan, locale } = req.body || {};
+    const { userId, email, plan, locale, successPath, cancelPath } = req.body || {};
     if (!userId || !email) {
       return res.status(400).json({ error: "missing_user" });
     }
@@ -154,28 +191,20 @@ app.post("/api/create-checkout-session", async (req, res) => {
       return res.status(503).json({ error: "price_not_configured" });
     }
 
-    const existing = store.getByUserId(userId);
-    let customerId = existing?.stripeCustomerId;
-
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: String(email).trim().toLowerCase(),
-        metadata: { userId },
-      });
-      customerId = customer.id;
-      store.upsert(userId, {
-        email: String(email).trim().toLowerCase(),
-        stripeCustomerId: customerId,
-      });
-    }
+    const customerId = await ensureStripeCustomer(userId, email);
 
     const localeMap = { it: "it", en: "en", es: "es" };
+    const successUrl = buildFrontendUrl(
+      successPath || "pagamento.html?checkout=success&session_id={CHECKOUT_SESSION_ID}"
+    );
+    const cancelUrl = buildFrontendUrl(cancelPath || "pagamento.html?checkout=cancelled");
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: "subscription",
       line_items: [{ price: stripePriceId, quantity: 1 }],
-      success_url: `${frontendUrl}/login.html?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${frontendUrl}/login.html?checkout=cancelled`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       locale: localeMap[locale] || "auto",
       metadata: { userId, plan: "monthly" },
       subscription_data: {
@@ -184,10 +213,49 @@ app.post("/api/create-checkout-session", async (req, res) => {
       allow_promotion_codes: true,
     });
 
-    res.json({ url: session.url });
+    res.json({ url: session.url, stripeCustomerId: customerId });
   } catch (error) {
     console.error("Create checkout session error:", error);
     res.status(500).json({ error: "checkout_session_failed" });
+  }
+});
+
+app.post("/api/create-express-checkout-session", async (req, res) => {
+  try {
+    const { userId, email, locale } = req.body || {};
+    if (!userId || !email) {
+      return res.status(400).json({ error: "missing_user" });
+    }
+    if (!stripePriceId) {
+      return res.status(503).json({ error: "price_not_configured" });
+    }
+
+    const customerId = await ensureStripeCustomer(userId, email);
+    const localeMap = { it: "it", en: "en", es: "es" };
+
+    const session = await stripe.checkout.sessions.create({
+      ui_mode: "elements",
+      customer: customerId,
+      mode: "subscription",
+      line_items: [{ price: stripePriceId, quantity: 1 }],
+      return_url: buildFrontendUrl(
+        "pagamento.html?checkout=success&session_id={CHECKOUT_SESSION_ID}"
+      ),
+      locale: localeMap[locale] || "auto",
+      metadata: { userId, plan: "monthly" },
+      subscription_data: {
+        metadata: { userId, plan: "monthly" },
+      },
+      allow_promotion_codes: true,
+    });
+
+    res.json({
+      clientSecret: session.client_secret,
+      stripeCustomerId: customerId,
+    });
+  } catch (error) {
+    console.error("Create express checkout session error:", error);
+    res.status(500).json({ error: "express_checkout_session_failed" });
   }
 });
 
@@ -235,32 +303,108 @@ app.get("/api/subscription/status", async (req, res) => {
 
 app.post("/api/create-portal-session", async (req, res) => {
   try {
-    const { userId } = req.body || {};
+    const { userId, email, returnPath, flow } = req.body || {};
     if (!userId) {
       return res.status(400).json({ error: "missing_user" });
     }
 
-    const record = store.getByUserId(userId);
-    if (!record?.stripeCustomerId) {
+    let record = store.getByUserId(userId);
+    let customerId = record?.stripeCustomerId;
+    if (!customerId && email) {
+      customerId = await ensureStripeCustomer(userId, email);
+      record = store.getByUserId(userId);
+    }
+    if (!customerId) {
       return res.status(404).json({ error: "customer_not_found" });
     }
 
-    const portalSession = await stripe.billingPortal.sessions.create({
-      customer: record.stripeCustomerId,
-      return_url: `${frontendUrl}/login.html#abbonamento`,
-    });
+    const safeReturnPath = String(returnPath || "pagamento.html").replace(/^\//, "");
+    const params = {
+      customer: customerId,
+      return_url: buildFrontendUrl(safeReturnPath),
+    };
 
-    res.json({ url: portalSession.url });
+    if (flow === "payment_method_update") {
+      params.flow_data = { type: "payment_method_update" };
+    }
+
+    const portalSession = await stripe.billingPortal.sessions.create(params);
+
+    res.json({ url: portalSession.url, stripeCustomerId: customerId });
   } catch (error) {
     console.error("Create portal session error:", error);
     res.status(500).json({ error: "portal_session_failed" });
   }
 });
 
-app.listen(port, () => {
+async function getPaymentMethodPayload(userId) {
+  const record = store.getByUserId(userId);
+  if (!record?.stripeCustomerId) {
+    return { hasPaymentMethod: false, brand: null, last4: null, expMonth: null, expYear: null };
+  }
+
+  const customer = await stripe.customers.retrieve(record.stripeCustomerId, {
+    expand: ["invoice_settings.default_payment_method"],
+  });
+
+  let paymentMethod = customer.invoice_settings?.default_payment_method;
+
+  if (!paymentMethod && record.stripeSubscriptionId) {
+    const subscription = await stripe.subscriptions.retrieve(record.stripeSubscriptionId, {
+      expand: ["default_payment_method"],
+    });
+    paymentMethod = subscription.default_payment_method;
+  }
+
+  if (typeof paymentMethod === "string") {
+    paymentMethod = await stripe.paymentMethods.retrieve(paymentMethod);
+  }
+
+  if (!paymentMethod?.card) {
+    const methods = await stripe.paymentMethods.list({
+      customer: record.stripeCustomerId,
+      type: "card",
+      limit: 1,
+    });
+    paymentMethod = methods.data[0] || null;
+  }
+
+  if (!paymentMethod?.card) {
+    return { hasPaymentMethod: false, brand: null, last4: null, expMonth: null, expYear: null };
+  }
+
+  return {
+    hasPaymentMethod: true,
+    brand: paymentMethod.card.brand,
+    last4: paymentMethod.card.last4,
+    expMonth: paymentMethod.card.exp_month,
+    expYear: paymentMethod.card.exp_year,
+    wallet: paymentMethod.card.wallet?.type || null,
+  };
+}
+
+app.get("/api/payment-method", async (req, res) => {
+  try {
+    const { userId } = req.query;
+    if (!userId) {
+      return res.status(400).json({ error: "missing_user" });
+    }
+    const payload = await getPaymentMethodPayload(String(userId));
+    res.json(payload);
+  } catch (error) {
+    console.error("Payment method error:", error);
+    res.status(500).json({ error: "payment_method_failed" });
+  }
+});
+
+app.listen(port, async () => {
+  await registerPaymentMethodDomain();
   console.log(`DaD Stripe server listening on http://localhost:${port}`);
   console.log(`Frontend URL: ${frontendUrl}`);
   if (!stripePriceId) {
     console.warn("STRIPE_PRICE_ID is not set — monthly checkout will fail until configured.");
+  }
+  if (!stripePublishableKey) {
+    console.warn("STRIPE_PUBLISHABLE_KEY is not set — Google Pay button will not load.");
   }
 });

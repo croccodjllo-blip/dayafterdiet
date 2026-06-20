@@ -29,7 +29,10 @@
         </header>
 
         <div class="login-card login-card-simple" id="auth-view">
-          <h2 class="login-form-title" data-i18n="auth.loginTitle">Accedi</h2>
+          <h2 class="login-form-title" id="auth-login-title" data-i18n="auth.loginTitle">Accedi</h2>
+          <p class="login-form-subtitle hidden" id="reset-form-subtitle" data-i18n="auth.resetSubtitle">
+            Inserisci email e nome account per impostare una nuova password.
+          </p>
 
           <p class="auth-error hidden" id="auth-error"></p>
 
@@ -57,6 +60,11 @@
                 required
               />
             </div>
+            <p class="login-forgot-row" id="login-forgot-row">
+              <button type="button" class="btn-text login-forgot-btn" id="forgot-password-btn" data-i18n="auth.forgotPassword">
+                Password dimenticata?
+              </button>
+            </p>
             <label class="login-remember">
               <input type="checkbox" id="login-remember" name="remember" checked />
               <span data-i18n="auth.remember">Ricordami</span>
@@ -64,12 +72,70 @@
             <button type="submit" class="btn-primary btn-block login-submit" data-i18n="auth.submit">Accedi</button>
           </form>
 
-          <p class="login-auth-switch">
+          <form id="reset-password-form" class="auth-form login-auth-form hidden">
+            <div class="field">
+              <label for="reset-email" data-i18n="auth.email">Email</label>
+              <input
+                type="email"
+                id="reset-email"
+                autocomplete="username"
+                data-i18n-placeholder="auth.emailPlaceholder"
+                placeholder="nome@email.it"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="reset-name" data-i18n="auth.resetNameLabel">Nome account</label>
+              <input
+                type="text"
+                id="reset-name"
+                autocomplete="name"
+                data-i18n-placeholder="auth.namePlaceholder"
+                placeholder="Il tuo nome"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="reset-password" data-i18n="auth.resetNewPassword">Nuova password</label>
+              <input
+                type="password"
+                id="reset-password"
+                autocomplete="new-password"
+                minlength="6"
+                data-i18n-placeholder="auth.passwordChoose"
+                placeholder="Scegli una password"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="reset-password-confirm" data-i18n="auth.resetConfirmPassword">Conferma password</label>
+              <input
+                type="password"
+                id="reset-password-confirm"
+                autocomplete="new-password"
+                minlength="6"
+                data-i18n-placeholder="auth.resetConfirmPlaceholder"
+                placeholder="Ripeti la password"
+                required
+              />
+            </div>
+            <button type="submit" class="btn-primary btn-block login-submit" data-i18n="auth.resetSubmit">
+              Reimposta password
+            </button>
+          </form>
+
+          <p class="login-auth-switch hidden" id="reset-back-row">
+            <button type="button" class="btn-text login-back-login-btn" id="back-to-login-btn" data-i18n="auth.backToLogin">
+              Torna al login
+            </button>
+          </p>
+
+          <p class="login-auth-switch" id="login-register-switch">
             <span data-i18n="auth.noAccount">Non hai un account?</span>
             <a href="registrati.html" id="register-page-link" data-i18n="auth.register">Registrati</a>
           </p>
 
-          <p class="login-tutorial-link">
+          <p class="login-tutorial-link" id="login-tutorial-link">
             <a href="tutorial.html" data-i18n="auth.tutorialLink">Guida rapida</a>
           </p>
         </div>

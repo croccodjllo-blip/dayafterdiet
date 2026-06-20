@@ -530,6 +530,7 @@ const authView = document.getElementById("auth-view");
 const profileView = document.getElementById("profile-view");
 const authErrorEl = document.getElementById("auth-error");
 const loginForm = document.getElementById("login-form");
+const resetPasswordForm = document.getElementById("reset-password-form");
 const registerForm = document.getElementById("register-form");
 const profileEditForm = document.getElementById("profile-edit-form");
 const logoutBtn = document.getElementById("logout-btn");
@@ -1872,13 +1873,34 @@ function reloadAppState() {
 function showAuthError(message) {
   if (!authErrorEl) return;
   authErrorEl.textContent = message;
+  authErrorEl.classList.remove("hidden", "auth-success");
+}
+
+function showAuthSuccess(message) {
+  if (!authErrorEl) return;
+  authErrorEl.textContent = message;
   authErrorEl.classList.remove("hidden");
+  authErrorEl.classList.add("auth-success");
 }
 
 function clearAuthError() {
   if (!authErrorEl) return;
   authErrorEl.textContent = "";
   authErrorEl.classList.add("hidden");
+  authErrorEl.classList.remove("auth-success");
+}
+
+function switchLoginAuthView(mode) {
+  const isReset = mode === "reset";
+  loginForm?.classList.toggle("hidden", isReset);
+  resetPasswordForm?.classList.toggle("hidden", !isReset);
+  document.getElementById("login-forgot-row")?.classList.toggle("hidden", isReset);
+  document.getElementById("login-register-switch")?.classList.toggle("hidden", isReset);
+  document.getElementById("login-tutorial-link")?.classList.toggle("hidden", isReset);
+  document.getElementById("reset-back-row")?.classList.toggle("hidden", !isReset);
+  document.getElementById("reset-form-subtitle")?.classList.toggle("hidden", !isReset);
+
+  clearAuthError();
 }
 
 function getCurrentPagePath() {
@@ -2083,6 +2105,33 @@ async function registerUser(formData) {
   }
   profileDialog?.close();
   render();
+}
+
+async function resetUserPassword(email, name, password, confirmPassword) {
+  const normalized = email.trim().toLowerCase();
+  const nameTrimmed = name.trim();
+
+  if (!normalized || !nameTrimmed) {
+    throw new Error(t("auth.resetMissingFields"));
+  }
+  if (password.length < 6) {
+    throw new Error(t("auth.passwordTooShort"));
+  }
+  if (password !== confirmPassword) {
+    throw new Error(t("auth.passwordMismatch"));
+  }
+
+  const user = await UsersDB.getByEmail(normalized);
+  if (!user) {
+    throw new Error(t("auth.resetAccountNotFound"));
+  }
+  if (user.name.trim().toLowerCase() !== nameTrimmed.toLowerCase()) {
+    throw new Error(t("auth.resetVerifyFailed"));
+  }
+
+  user.passwordHash = await hashPassword(normalized, password);
+  await persistUser(user);
+  return user;
 }
 
 async function loginUser(email, password, remember = true) {
@@ -5092,6 +5141,43 @@ loginForm?.addEventListener("submit", async (event) => {
       document.getElementById("login-password").value,
       remember
     );
+  } catch (error) {
+    showAuthError(error.message);
+  }
+});
+
+document.getElementById("forgot-password-btn")?.addEventListener("click", () => {
+  const loginEmail = document.getElementById("login-email")?.value.trim();
+  switchLoginAuthView("reset");
+  if (loginEmail) {
+    const resetEmailInput = document.getElementById("reset-email");
+    if (resetEmailInput) resetEmailInput.value = loginEmail;
+  }
+  document.getElementById("reset-name")?.focus();
+});
+
+document.getElementById("back-to-login-btn")?.addEventListener("click", () => {
+  resetPasswordForm?.reset();
+  switchLoginAuthView("login");
+});
+
+resetPasswordForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  clearAuthError();
+  try {
+    const email = document.getElementById("reset-email").value;
+    await resetUserPassword(
+      email,
+      document.getElementById("reset-name").value,
+      document.getElementById("reset-password").value,
+      document.getElementById("reset-password-confirm").value
+    );
+    resetPasswordForm.reset();
+    switchLoginAuthView("login");
+    const loginEmailInput = document.getElementById("login-email");
+    if (loginEmailInput) loginEmailInput.value = email.trim();
+    document.getElementById("login-password")?.focus();
+    showAuthSuccess(t("auth.resetSuccess"));
   } catch (error) {
     showAuthError(error.message);
   }

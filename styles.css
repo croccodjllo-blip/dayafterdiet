@@ -427,6 +427,47 @@ body {
   display: none;
 }
 
+.auth-error.auth-success {
+  color: var(--accent-light);
+  background: var(--accent-soft);
+}
+
+body[data-page="login"] .auth-error.auth-success {
+  border-color: rgba(0, 230, 118, 0.35);
+}
+
+.login-forgot-row {
+  margin: -6px 0 14px;
+  text-align: right;
+}
+
+.login-forgot-btn,
+.login-back-login-btn {
+  padding: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--exercise-light);
+}
+
+.login-forgot-btn:hover,
+.login-back-login-btn:hover {
+  text-decoration: underline;
+}
+
+#reset-back-row {
+  margin-top: 16px;
+  padding-top: 0;
+  border-top: none;
+}
+
+.login-form-title.hidden,
+.login-form-subtitle.hidden,
+.login-auth-switch.hidden,
+.login-tutorial-link.hidden,
+.login-forgot-row.hidden {
+  display: none;
+}
+
 .profile-close-guest {
   margin-top: 12px;
 }

@@ -5945,6 +5945,8 @@ function initResetPasswordPage() {
 }
 
 async function bootstrapApp() {
+  initNativeMobileShell();
+
   try {
     await initUserDatabase();
   } catch (error) {
@@ -5993,3 +5995,20 @@ async function bootstrapApp() {
 }
 
 bootstrapApp();
+
+function initNativeMobileShell() {
+  const cap = window.Capacitor;
+  if (!cap?.isNativePlatform?.()) return;
+
+  cap.Plugins.SplashScreen?.hide?.();
+  cap.Plugins.StatusBar?.setStyle?.({ style: "DARK" });
+  cap.Plugins.StatusBar?.setBackgroundColor?.({ color: "#0a2342" });
+
+  cap.Plugins.App?.addListener?.("backButton", ({ canGoBack }) => {
+    if (canGoBack) {
+      window.history.back();
+      return;
+    }
+    cap.Plugins.App.minimizeApp();
+  });
+}

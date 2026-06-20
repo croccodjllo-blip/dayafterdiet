@@ -9,6 +9,12 @@ if ! command -v node >/dev/null 2>&1; then
   exit 1
 fi
 
+NODE_MAJOR="$(node -p "process.versions.node.split('.')[0]")"
+if [ "$NODE_MAJOR" -lt 18 ]; then
+  echo "Serve Node.js 18 o superiore."
+  exit 1
+fi
+
 npm install
 
 if [ ! -d android ]; then
@@ -18,7 +24,10 @@ fi
 npx cap sync android
 
 echo ""
-echo "Progetto Android pronto."
-echo "1. Apri Android Studio: npm run open"
-echo "2. Build → Generate Signed Bundle / APK → Android App Bundle (AAB)"
-echo "3. Carica l'AAB su Google Play Console"
+echo "App Android pronta in mobile/android/"
+echo ""
+echo "Prossimi passi:"
+echo "  1. Installa Android Studio e l'SDK Android 34+"
+echo "  2. npm run open"
+echo "  3. Run ▶ per provare su emulatore/telefono"
+echo "  4. Build → Generate Signed Bundle per Google Play"

@@ -2,5 +2,9 @@ server/node_modules/
 server/.env
 server/data/subscriptions.json
 mobile/node_modules/
-mobile/android/
 mobile/.gradle/
+mobile/*.zip
+mobile/android/local.properties
+mobile/android/.gradle/
+mobile/android/build/
+mobile/android/app/build/

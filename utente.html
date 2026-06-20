@@ -153,13 +153,19 @@
           </div>
 
           <form id="settings-form" class="user-form">
-            <div class="field">
-              <label for="language-select" data-i18n="user.language">Lingua</label>
-              <select id="language-select" name="language">
-                <option value="it">Italiano</option>
-                <option value="en">English</option>
-                <option value="es">Español</option>
-              </select>
+            <div class="field language-field">
+              <label data-i18n="user.language">Lingua</label>
+              <div
+                class="language-flags"
+                id="language-flags"
+                role="group"
+                data-i18n-aria="user.language"
+                aria-label="Lingua"
+              >
+                <button type="button" class="language-flag-btn" data-lang="it" aria-label="Italiano" title="Italiano">🇮🇹</button>
+                <button type="button" class="language-flag-btn" data-lang="en" aria-label="English" title="English">🇬🇧</button>
+                <button type="button" class="language-flag-btn" data-lang="es" aria-label="Español" title="Español">🇪🇸</button>
+              </div>
               <p class="field-hint" data-i18n="user.languageHint">L'interfaccia si aggiorna subito. I nomi degli alimenti restano in italiano.</p>
             </div>
             <div class="field goal-field-auto">

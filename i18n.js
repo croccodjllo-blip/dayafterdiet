@@ -320,7 +320,7 @@ const MESSAGES = {
     "tutorial.startStep1": "Clicca Registrati dalla pagina di login e compila nome, email, password e dati fisici (età, altezza, peso, attività).",
     "tutorial.startStep2": "DaD calcola automaticamente BMR, TDEE e il target calorico in base al tuo obiettivo dieta (mantenimento, dimagrimento, massa).",
     "tutorial.startStep3": "Accedi con email e password. Spunta Ricordami per non reinserire le credenziali ogni volta.",
-    "tutorial.startStep4": "Scegli la lingua (Italiano, English, Español) dal selettore in alto — vale per tutta l'app.",
+    "tutorial.startStep4": "Scegli la lingua toccando le bandiere in alto — vale per tutta l'app.",
     "tutorial.todayTitle": "2. Pagina Oggi — il cuore dell'app",
     "tutorial.todayLead": "Oggi è la schermata principale: qui registri tutto ciò che succede nella giornata.",
     "tutorial.todayB1": "Barra budget — in alto vedi quante calorie hai assunto, bruciato e quante ne restano rispetto al target.",
@@ -721,7 +721,7 @@ const MESSAGES = {
     "tutorial.startStep1": "Click Sign up from the login page and fill in your name, email, password, and physical details (age, height, weight, activity).",
     "tutorial.startStep2": "DaD automatically calculates BMR, TDEE, and your calorie target based on your diet goal (maintain, lose, gain).",
     "tutorial.startStep3": "Log in with email and password. Check Remember me to skip re-entering credentials.",
-    "tutorial.startStep4": "Choose your language (Italiano, English, Español) from the selector at the top — it applies to the whole app.",
+    "tutorial.startStep4": "Choose your language by tapping the flags at the top — it applies to the whole app.",
     "tutorial.todayTitle": "2. Today page — the heart of the app",
     "tutorial.todayLead": "Today is the main screen: this is where you log everything that happens during your day.",
     "tutorial.todayB1": "Budget bar — at the top you see calories consumed, burned, and remaining vs. your target.",
@@ -1122,7 +1122,7 @@ const MESSAGES = {
     "tutorial.startStep1": "Haz clic en Regístrate desde el login y completa nombre, email, contraseña y datos físicos (edad, altura, peso, actividad).",
     "tutorial.startStep2": "DaD calcula automáticamente BMR, TDEE y el objetivo calórico según tu meta (mantener, adelgazar, ganar masa).",
     "tutorial.startStep3": "Inicia sesión con email y contraseña. Marca Recuérdame para no volver a escribir las credenciales.",
-    "tutorial.startStep4": "Elige el idioma (Italiano, English, Español) en el selector superior — se aplica a toda la app.",
+    "tutorial.startStep4": "Elige el idioma tocando las banderas arriba — se aplica a toda la app.",
     "tutorial.todayTitle": "2. Página Hoy — el corazón de la app",
     "tutorial.todayLead": "Hoy es la pantalla principal: aquí registras todo lo que ocurre durante el día.",
     "tutorial.todayB1": "Barra de presupuesto — arriba ves calorías consumidas, quemadas y restantes respecto al objetivo.",
@@ -1314,11 +1314,6 @@ function applyPageTranslations() {
   const pageHeading = document.querySelector("[data-i18n-page-heading]");
   if (pageHeading) pageHeading.textContent = t(pageHeading.dataset.i18nPageHeading);
 
-  translateSelectOptions(document.getElementById("language-select"), {
-    it: "Italiano",
-    en: "English",
-    es: "Español",
-  });
   translateSelectOptions(document.getElementById("diet-objective"), {
     maintain: "diet.maintainFull",
     lose_light: "diet.lose_lightFull",

@@ -554,7 +554,7 @@ const weightInput = document.getElementById("weight-input");
 const dietObjectiveSelect = document.getElementById("diet-objective");
 const weekStartDaySelect = document.getElementById("week-start-day");
 const weekStartDayPicker = document.getElementById("week-start-day-picker");
-const languageSelect = document.getElementById("language-select");
+const languageFlags = document.getElementById("language-flags");
 const weeklySummarySubtitleEl = document.getElementById("weekly-summary-subtitle");
 const tomorrowDateEl = document.getElementById("tomorrow-date");
 const tomorrowKcalEl = document.getElementById("tomorrow-kcal");
@@ -1056,6 +1056,7 @@ function saveLanguage(lang) {
   }
 
   applyPageTranslations();
+  syncLanguageFlagButtons();
   populateWeekStartDaySelect(weekStartDaySelect, getWeekStartDay());
   populateWeekStartDaySelect(weekStartDayPicker, getWeekStartDay());
   if (foodTypeSelect) populateFoodSelect(foodTypeSelect);
@@ -5236,7 +5237,7 @@ function populateSettingsForm() {
   weightInput.value = state.weight;
   dietObjectiveSelect.value = state.dietObjective;
   populateWeekStartDaySelect(weekStartDaySelect, getWeekStartDay());
-  if (languageSelect) languageSelect.value = getLanguage();
+  if (languageFlags) syncLanguageFlagButtons();
   splitProteinInput.value = state.split.protein;
   splitCarbsInput.value = state.split.carbs;
   splitFatInput.value = state.split.fat;
@@ -5309,9 +5310,32 @@ function initUserPage() {
     document.getElementById("user-settings-section")?.scrollIntoView({ behavior: "smooth" });
   }
 
-  languageSelect?.addEventListener("change", () => {
-    saveLanguage(languageSelect.value);
+  initLanguageFlags();
+}
+
+function syncLanguageFlagButtons() {
+  const current = getLanguage();
+  document.querySelectorAll(".language-flag-btn").forEach((btn) => {
+    const active = btn.dataset.lang === current;
+    btn.classList.toggle("is-active", active);
+    btn.setAttribute("aria-pressed", String(active));
   });
+}
+
+function initLanguageFlags() {
+  const container = document.getElementById("language-flags");
+  if (!container || container.dataset.wired === "1") {
+    syncLanguageFlagButtons();
+    return;
+  }
+
+  container.dataset.wired = "1";
+  container.querySelectorAll(".language-flag-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      saveLanguage(btn.dataset.lang);
+    });
+  });
+  syncLanguageFlagButtons();
 }
 
 function showSettingsSavedNote() {
@@ -5819,12 +5843,7 @@ function initWeekPage() {
 }
 
 function initAuthLanguageSelect() {
-  const select = document.getElementById("language-select");
-  if (!select) return;
-  select.value = getLanguage();
-  select.addEventListener("change", () => {
-    saveLanguage(select.value);
-  });
+  initLanguageFlags();
 }
 
 function initLoginPage() {

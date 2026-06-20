@@ -8,7 +8,7 @@
     location.hostname === "127.0.0.1" ||
     location.protocol === "file:";
 
-  const productionApiBase = "https://dayafterdiet-api.onrender.com";
+  const productionApiBase = "https://dayafterdiet-production.up.railway.app";
 
   window.STRIPE_CONFIG = {
     apiBase: metaBase || (isLocal ? "http://localhost:4242" : productionApiBase),

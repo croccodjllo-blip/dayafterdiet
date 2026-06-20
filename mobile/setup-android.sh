@@ -23,6 +23,12 @@ fi
 
 npx cap sync android
 
+SDK_DIR="${ANDROID_HOME:-$HOME/Android/Sdk}"
+if [ -d "$SDK_DIR" ] && [ ! -f android/local.properties ]; then
+  printf 'sdk.dir=%s\n' "$SDK_DIR" > android/local.properties
+  echo "Creato android/local.properties → $SDK_DIR"
+fi
+
 echo ""
 echo "App Android pronta in mobile/android/"
 echo ""

@@ -5945,7 +5945,7 @@ function initResetPasswordPage() {
 }
 
 async function bootstrapApp() {
-  initNativeMobileShell();
+  initMobileAppShell();
 
   try {
     await initUserDatabase();
@@ -5996,13 +5996,31 @@ async function bootstrapApp() {
 
 bootstrapApp();
 
-function initNativeMobileShell() {
+function isNativeMobileApp() {
+  return Boolean(window.Capacitor?.isNativePlatform?.());
+}
+
+function isInstalledMobileApp() {
+  return (
+    isNativeMobileApp() ||
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.navigator.standalone === true
+  );
+}
+
+function initMobileAppShell() {
+  if (isInstalledMobileApp()) {
+    document.documentElement.classList.add("mobile-app");
+  }
+
+  if (!isNativeMobileApp()) return;
+
   const cap = window.Capacitor;
-  if (!cap?.isNativePlatform?.()) return;
 
   cap.Plugins.SplashScreen?.hide?.();
   cap.Plugins.StatusBar?.setStyle?.({ style: "DARK" });
   cap.Plugins.StatusBar?.setBackgroundColor?.({ color: "#0a2342" });
+  cap.Plugins.Keyboard?.setResizeMode?.({ mode: "body" });
 
   cap.Plugins.App?.addListener?.("backButton", ({ canGoBack }) => {
     if (canGoBack) {
@@ -6010,5 +6028,11 @@ function initNativeMobileShell() {
       return;
     }
     cap.Plugins.App.minimizeApp();
+  });
+
+  cap.Plugins.App?.addListener?.("appStateChange", ({ isActive }) => {
+    if (isActive && PAGE !== "login" && PAGE !== "register" && PAGE !== "reset-password") {
+      void syncSubscriptionFromServer();
+    }
   });
 }

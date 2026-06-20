@@ -5,7 +5,14 @@
   "server": {
     "url": "https://croccodjllo-blip.github.io/dayafterdiet/",
     "cleartext": false,
-    "androidScheme": "https"
+    "androidScheme": "https",
+    "allowNavigation": [
+      "croccodjllo-blip.github.io",
+      "dayafterdiet-production.up.railway.app",
+      "checkout.stripe.com",
+      "billing.stripe.com",
+      "pay.google.com"
+    ]
   },
   "android": {
     "backgroundColor": "#0a2342",
@@ -13,13 +20,19 @@
   },
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 1500,
+      "launchShowDuration": 1800,
+      "launchAutoHide": true,
       "backgroundColor": "#0a2342",
-      "showSpinner": false
+      "showSpinner": false,
+      "androidSplashResourceName": "splash"
     },
     "StatusBar": {
       "style": "DARK",
       "backgroundColor": "#0a2342"
+    },
+    "Keyboard": {
+      "resize": "body",
+      "resizeOnFullScreen": true
     }
   }
 }

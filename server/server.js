@@ -17,10 +17,28 @@ if (!stripeSecretKey) {
   process.exit(1);
 }
 
+if (stripeSecretKey.startsWith("pk_")) {
+  console.error("STRIPE_SECRET_KEY must start with sk_, not pk_. Swap STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY on Railway.");
+  process.exit(1);
+}
+
+if (stripePublishableKey && !stripePublishableKey.startsWith("pk_")) {
+  console.error("STRIPE_PUBLISHABLE_KEY must start with pk_. You may have pasted the secret key by mistake.");
+  process.exit(1);
+}
+
 const stripe = new Stripe(stripeSecretKey);
 const app = express();
 
 const ACTIVE_STATUSES = new Set(["active", "trialing", "past_due"]);
+
+function stripeErrorCode(error) {
+  const message = String(error?.message || "").toLowerCase();
+  if (error?.type === "StripeAuthenticationError" || message.includes("invalid api key")) {
+    return "invalid_stripe_keys";
+  }
+  return "checkout_session_failed";
+}
 
 function subscriptionToPayload(subscription, userId) {
   const customerId =
@@ -169,11 +187,15 @@ app.use(
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => {
+  const safePublishableKey =
+    stripePublishableKey && stripePublishableKey.startsWith("pk_") ? stripePublishableKey : null;
+
   res.json({
     ok: true,
     stripe: Boolean(stripeSecretKey),
     priceConfigured: Boolean(stripePriceId),
-    publishableKey: stripePublishableKey || null,
+    publishableKey: safePublishableKey,
+    publishableKeyConfigured: Boolean(safePublishableKey),
     googlePayEnabled: true,
   });
 });
@@ -216,7 +238,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
     res.json({ url: session.url, stripeCustomerId: customerId });
   } catch (error) {
     console.error("Create checkout session error:", error);
-    res.status(500).json({ error: "checkout_session_failed" });
+    res.status(500).json({ error: stripeErrorCode(error) });
   }
 });
 

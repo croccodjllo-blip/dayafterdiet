@@ -4810,15 +4810,31 @@ async function startStripeCheckout(plan = "monthly") {
       }),
     });
 
-    if (!response.ok) throw new Error("checkout_failed");
+    if (!response.ok) {
+      let errorCode = "checkout_failed";
+      try {
+        const payload = await response.json();
+        if (payload?.error) errorCode = payload.error;
+      } catch {
+        /* ignore */
+      }
+      throw new Error(errorCode);
+    }
 
     const { url, stripeCustomerId } = await response.json();
     if (stripeCustomerId) await persistStripeCustomerId(stripeCustomerId);
     if (!url) throw new Error("missing_checkout_url");
     window.location.href = url;
     return true;
-  } catch {
-    alert(t("sub.checkoutError"));
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "checkout_failed";
+    if (code === "price_not_configured") {
+      alert(t("sub.stripePriceMissing"));
+    } else if (code === "invalid_stripe_keys") {
+      alert(t("sub.stripeConfigError"));
+    } else {
+      alert(t("sub.checkoutError"));
+    }
     if (monthlyBtn) {
       monthlyBtn.disabled = false;
       monthlyBtn.textContent = originalLabel || t("sub.monthlyCta");

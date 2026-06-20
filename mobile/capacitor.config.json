@@ -1,0 +1,25 @@
+{
+  "appId": "com.dadayfterdiet.app",
+  "appName": "DaD",
+  "webDir": "www",
+  "server": {
+    "url": "https://croccodjllo-blip.github.io/dayafterdiet/",
+    "cleartext": false,
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#0a2342",
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor": "#0a2342",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#0a2342"
+    }
+  }
+}

@@ -5051,3 +5051,26 @@ body[data-page="user"] .user-form-actions {
 body[data-page="user"] .user-form-actions .profile-payment-page-link {
   flex: 1 1 100%;
 }
+
+.privacy-policy h2 {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.privacy-policy ul {
+  margin: 0.5rem 0 1rem 1.25rem;
+}
+
+.privacy-policy a {
+  color: var(--green);
+}
+
+.privacy-footer-link {
+  text-align: center;
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+}
+
+.privacy-footer-link a {
+  color: var(--text-muted);
+}

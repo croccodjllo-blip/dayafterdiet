@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#0a2342" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <title>DaD — Dati totali</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="totals" data-i18n-page-title="page.totalsTitle">
+    <div class="app">
+      <header class="header">
+        <div class="brand">
+          <span class="brand-logo" aria-hidden="true">DaD</span>
+          <div>
+            <h1 data-i18n-page-heading="page.totals">Dati totali</h1>
+            <p class="subtitle" id="totals-page-label">—</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <a href="utente.html" class="btn-icon btn-icon-link" id="profile-btn" data-i18n-title="nav.profile" title="Profilo">
+            <span class="profile-btn-avatar hidden" id="profile-btn-avatar" aria-hidden="true"></span>
+            <svg class="profile-btn-icon" id="profile-btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </a>
+        </div>
+      </header>
+
+      <main class="page-main page-main-totals">
+        <section class="profile-banner hidden" id="profile-banner" data-i18n-aria="user.profileCard" aria-label="Scheda personale">
+          <div class="profile-banner-inner">
+            <div class="profile-banner-user">
+              <span class="profile-avatar" id="banner-avatar">?</span>
+              <div>
+                <p class="profile-banner-name" id="banner-name">—</p>
+                <p class="profile-banner-meta" id="banner-meta">—</p>
+              </div>
+            </div>
+            <div class="profile-banner-stats">
+              <div class="profile-stat-pill"><span>BMI</span><strong id="banner-bmi">—</strong></div>
+              <div class="profile-stat-pill"><span>TDEE</span><strong id="banner-tdee">—</strong></div>
+              <div class="profile-stat-pill"><span data-i18n="common.target">Target</span><strong id="banner-goal">—</strong></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="totals-hero-card" aria-labelledby="totals-hero-title">
+          <div class="totals-hero-head">
+            <div>
+              <h2 id="totals-hero-title" class="section-title" data-i18n="totals.dailyAvg">Media giornaliera</h2>
+              <p class="card-subtitle" id="totals-period">—</p>
+            </div>
+            <span class="totals-days-badge" id="totals-days-badge">0 giorni</span>
+          </div>
+          <div class="weekly-kpi-strip totals-kpi-strip">
+            <div class="weekly-kpi weekly-kpi-featured">
+              <span class="weekly-kpi-label" data-i18n="totals.avgConsumed">Media assunte</span>
+              <strong id="totals-consumed">0</strong>
+              <span class="weekly-kpi-hint" data-i18n="common.kcalDay">kcal/giorno</span>
+            </div>
+            <div class="weekly-kpi">
+              <span class="weekly-kpi-label" data-i18n="totals.avgBurned">Media bruciate</span>
+              <strong id="totals-burned">0</strong>
+              <span class="weekly-kpi-hint" data-i18n="common.kcalDay">kcal/giorno</span>
+            </div>
+            <div class="weekly-kpi">
+              <span class="weekly-kpi-label" data-i18n="totals.avgNet">Media netto</span>
+              <strong id="totals-net">0</strong>
+              <span class="weekly-kpi-hint" data-i18n="common.kcalDay">kcal/giorno</span>
+            </div>
+            <div class="weekly-kpi">
+              <span class="weekly-kpi-label" data-i18n="common.target">Target</span>
+              <strong id="totals-avg-day">0</strong>
+              <span class="weekly-kpi-hint" data-i18n="common.kcalDay">kcal/giorno</span>
+            </div>
+          </div>
+          <p class="totals-note" id="totals-note">—</p>
+        </section>
+
+        <details class="weekly-collapse totals-section" open>
+          <summary class="weekly-collapse-trigger">
+            <div class="weekly-collapse-heading">
+              <h3 data-i18n="totals.nutrition">Alimentazione</h3>
+              <p class="weekly-chart-desc" data-i18n="totals.nutritionDesc">Macro e micronutrienti medi giornalieri</p>
+            </div>
+            <span class="weekly-collapse-chevron" aria-hidden="true"></span>
+          </summary>
+          <div class="weekly-collapse-body">
+            <div class="macro-bars totals-macro-bars" id="totals-macro-bars"></div>
+            <div class="weekly-nutrition-section weekly-micro-panel">
+              <h4 class="weekly-nutrition-section-title" data-i18n="week.micronutrients">Micronutrienti</h4>
+              <div class="macro-bars weekly-micro-bars" id="totals-micro-bars"></div>
+              <p class="weekly-micro-note" id="totals-micro-note">—</p>
+            </div>
+          </div>
+        </details>
+
+        <details class="weekly-collapse totals-section" open>
+          <summary class="weekly-collapse-trigger">
+            <div class="weekly-collapse-heading">
+              <h3 data-i18n="today.sport">Attività fisica</h3>
+              <p class="weekly-chart-desc" data-i18n="totals.activityDesc">Medie sui giorni con attività registrata</p>
+            </div>
+            <span class="weekly-collapse-chevron" aria-hidden="true"></span>
+          </summary>
+          <div class="weekly-collapse-body">
+            <div class="weekly-kpi-strip">
+              <div class="weekly-kpi">
+                <span class="weekly-kpi-label" data-i18n="week.sport">Sport</span>
+                <strong id="totals-sport-burned">0</strong>
+                <span class="weekly-kpi-hint" data-i18n="common.kcalDay">kcal/giorno</span>
+              </div>
+              <div class="weekly-kpi">
+                <span class="weekly-kpi-label" data-i18n="week.sessions">Sessioni</span>
+                <strong id="totals-sport-sessions">0</strong>
+                <span class="weekly-kpi-hint" data-i18n="totals.perDayAvg">media/giorno</span>
+              </div>
+              <div class="weekly-kpi">
+                <span class="weekly-kpi-label" data-i18n="common.duration">Durata</span>
+                <strong id="totals-sport-duration">0</strong>
+                <span class="weekly-kpi-hint" data-i18n="totals.perDayAvg">media/giorno</span>
+              </div>
+              <div class="weekly-kpi">
+                <span class="weekly-kpi-label" data-i18n="totals.work">Lavoro</span>
+                <strong id="totals-work-burned">0</strong>
+                <span class="weekly-kpi-hint" data-i18n="common.kcalDay">kcal/giorno</span>
+              </div>
+            </div>
+            <div class="totals-list-wrap">
+              <h4 class="weekly-nutrition-section-title" data-i18n="totals.topActivities">Attività più frequenti</h4>
+              <div id="totals-activity-list"></div>
+            </div>
+          </div>
+        </details>
+
+        <details class="weekly-collapse totals-section" open>
+          <summary class="weekly-collapse-trigger">
+            <div class="weekly-collapse-heading">
+              <h3 data-i18n="totals.body">Corpo</h3>
+              <p class="weekly-chart-desc" data-i18n="totals.bodyDesc">Peso e misure corporee nel tempo</p>
+            </div>
+            <span class="weekly-collapse-chevron" aria-hidden="true"></span>
+          </summary>
+          <div class="weekly-collapse-body">
+            <div class="weekly-kpi-strip totals-body-kpi">
+              <div class="weekly-kpi weekly-kpi-featured weekly-kpi-weight">
+                <span class="weekly-kpi-label" data-i18n="week.currentWeight">Peso attuale</span>
+                <strong id="totals-weight-current">—</strong>
+                <span class="weekly-kpi-hint" data-i18n="common.kg">kg</span>
+              </div>
+              <div class="weekly-kpi">
+                <span class="weekly-kpi-label" data-i18n="totals.historicDelta">Δ storico</span>
+                <strong id="totals-weight-delta">—</strong>
+                <span class="weekly-kpi-hint" data-i18n="common.kg">kg</span>
+              </div>
+              <div class="weekly-kpi">
+                <span class="weekly-kpi-label" data-i18n="totals.registrations">Registrazioni</span>
+                <strong id="totals-weight-days">0</strong>
+                <span class="weekly-kpi-hint" data-i18n="common.days">giorni</span>
+              </div>
+            </div>
+            <div class="weekly-body-measures-summary" id="totals-body-measures"></div>
+            <p class="totals-note" id="totals-body-note">—</p>
+          </div>
+        </details>
+      </main>
+
+      <nav class="bottom-nav bottom-nav-6" data-i18n-aria="nav.main" aria-label="Navigazione principale">
+        <a href="utente.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">👤</span>
+          <span data-i18n="nav.profile">Profilo</span>
+        </a>
+        <a href="riepilogo.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">📊</span>
+          <span data-i18n="nav.overview">Riepilogo</span>
+        </a>
+        <a href="index.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">⚡</span>
+          <span data-i18n="nav.today">Oggi</span>
+        </a>
+        <a href="domani.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">🎯</span>
+          <span data-i18n="nav.tomorrow">Domani</span>
+        </a>
+        <a href="settimana.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">🏆</span>
+          <span data-i18n="nav.week">Settimana</span>
+        </a>
+        <a href="dati-totali.html" class="bottom-nav-link active" aria-current="page">
+          <span class="bottom-nav-icon" aria-hidden="true">📈</span>
+          <span data-i18n="nav.totals">Totali</span>
+        </a>
+      </nav>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="catalog-i18n.js"></script>
+    <script src="users-db.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#0a2342" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <title>DaD — Riepilogo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="overview" data-i18n-page-title="page.overviewTitle">
+    <div class="app">
+      <header class="header">
+        <div class="brand">
+          <span class="brand-logo" aria-hidden="true">DaD</span>
+          <div>
+            <h1 data-i18n-page-heading="page.overview">Riepilogo</h1>
+            <p class="subtitle" id="overview-page-label">—</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <a href="utente.html" class="btn-icon btn-icon-link" id="profile-btn" data-i18n-title="nav.profile" title="Profilo">
+            <span class="profile-btn-avatar hidden" id="profile-btn-avatar" aria-hidden="true"></span>
+            <svg class="profile-btn-icon" id="profile-btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </a>
+        </div>
+      </header>
+
+      <main class="page-main">
+      <section class="profile-banner hidden" id="profile-banner" data-i18n-aria="user.profileCard" aria-label="Scheda personale">
+        <div class="profile-banner-inner">
+          <div class="profile-banner-user">
+            <span class="profile-avatar" id="banner-avatar">?</span>
+            <div>
+              <p class="profile-banner-name" id="banner-name">—</p>
+              <p class="profile-banner-meta" id="banner-meta">—</p>
+            </div>
+          </div>
+          <div class="profile-banner-stats">
+            <div class="profile-stat-pill"><span>BMI</span><strong id="banner-bmi">—</strong></div>
+            <div class="profile-stat-pill"><span>TDEE</span><strong id="banner-tdee">—</strong></div>
+            <div class="profile-stat-pill"><span data-i18n="common.target">Target</span><strong id="banner-goal">—</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="summary-card" aria-labelledby="summary-title">
+        <div class="card-head">
+          <div>
+            <h2 id="summary-title" class="section-title" data-i18n="page.overview">Riepilogo</h2>
+            <p class="card-subtitle" data-i18n="overview.todayMacros">Calorie e macro di oggi</p>
+          </div>
+        </div>
+        <div class="summary-top">
+          <div class="calorie-ring" id="calorie-ring" style="--progress: 0">
+            <div class="ring-inner">
+              <span class="ring-value" id="total-calories">0</span>
+              <span class="ring-label" id="ring-label" data-i18n="overview.netKcal">netto kcal</span>
+            </div>
+          </div>
+          <div class="summary-stats">
+            <div class="stat">
+              <span class="stat-label" data-i18n="common.budget">Budget</span>
+              <span class="stat-value" id="goal-display">2000 kcal</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label" data-i18n="common.consumed">Assunte</span>
+              <span class="stat-value" id="consumed-display">0 kcal</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label" data-i18n="common.burned">Bruciate</span>
+              <span class="stat-value stat-exercise" id="burned-display">0 kcal</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label" data-i18n="common.remaining">Rimanenti</span>
+              <span class="stat-value" id="remaining-display">2000 kcal</span>
+            </div>
+          </div>
+        </div>
+        <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <p class="progress-message" id="progress-message" data-i18n="overview.addFirstMeal">Aggiungi il tuo primo pasto della giornata.</p>
+
+        <div class="macros-panel" aria-labelledby="macros-title">
+          <h3 id="macros-title" class="macros-title" data-i18n="overview.dailyMacros">Macro giornaliere</h3>
+          <div class="macro-bars">
+            <div class="macro-row">
+              <div class="macro-header">
+                <span class="macro-name macro-protein" data-i18n="macro.protein">Proteine</span>
+                <span class="macro-values"><span id="total-protein">0</span> / <span id="goal-protein">150</span> g</span>
+              </div>
+              <div class="macro-bar"><div class="macro-fill macro-fill-protein" id="protein-fill"></div></div>
+            </div>
+            <div class="macro-row">
+              <div class="macro-header">
+                <span class="macro-name macro-carbs" data-i18n="macro.carbs">Carboidrati</span>
+                <span class="macro-values"><span id="total-carbs">0</span> / <span id="goal-carbs">200</span> g</span>
+              </div>
+              <div class="macro-bar"><div class="macro-fill macro-fill-carbs" id="carbs-fill"></div></div>
+            </div>
+            <div class="macro-row">
+              <div class="macro-header">
+                <span class="macro-name macro-fat" data-i18n="macro.fat">Grassi</span>
+                <span class="macro-values"><span id="total-fat">0</span> / <span id="goal-fat">67</span> g</span>
+              </div>
+              <div class="macro-bar"><div class="macro-fill macro-fill-fat" id="fat-fill"></div></div>
+            </div>
+          </div>
+          <p class="macro-kcal-note" id="macro-kcal-note">Macro da calorie: 0 kcal (0% del totale)</p>
+        </div>
+      </section>
+
+      <section class="overview-cards" data-i18n-aria="overview.panorama" aria-label="Panoramica">
+        <h2 class="overview-cards-title" data-i18n="overview.panorama">Panoramica</h2>
+        <div class="overview-cards-grid">
+          <a href="index.html" class="overview-card">
+            <span class="overview-card-label" data-i18n="nav.today">Oggi</span>
+            <strong class="overview-card-value" id="overview-meals-count">0 alimenti</strong>
+            <span class="overview-card-meta" id="overview-activities-count">0 attività</span>
+          </a>
+          <a href="domani.html" class="overview-card">
+            <span class="overview-card-label" data-i18n="nav.tomorrow">Domani</span>
+            <strong class="overview-card-value" id="overview-tomorrow-target">— kcal</strong>
+            <span class="overview-card-meta" data-i18n="overview.suggestedTarget">Target suggerito</span>
+          </a>
+          <a href="settimana.html" class="overview-card">
+            <span class="overview-card-label" data-i18n="nav.week">Settimana</span>
+            <strong class="overview-card-value" id="overview-week-remaining">— kcal</strong>
+            <span class="overview-card-meta" id="overview-week-range">—</span>
+          </a>
+          <a href="dati-totali.html" class="overview-card">
+            <span class="overview-card-label" data-i18n="overview.totalsCard">Dati totali</span>
+            <strong class="overview-card-value" id="overview-total-days">—</strong>
+            <span class="overview-card-meta" data-i18n="overview.totalsMeta">Media kcal/giorno</span>
+          </a>
+        </div>
+      </section>
+
+      </main>
+
+      <nav class="bottom-nav bottom-nav-6" data-i18n-aria="nav.main" aria-label="Navigazione principale">
+        <a href="utente.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">👤</span>
+          <span data-i18n="nav.profile">Profilo</span>
+        </a>
+        <a href="riepilogo.html" class="bottom-nav-link active" aria-current="page">
+          <span class="bottom-nav-icon" aria-hidden="true">📊</span>
+          <span data-i18n="nav.overview">Riepilogo</span>
+        </a>
+        <a href="index.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">⚡</span>
+          <span data-i18n="nav.today">Oggi</span>
+        </a>
+        <a href="domani.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">🎯</span>
+          <span data-i18n="nav.tomorrow">Domani</span>
+        </a>
+        <a href="settimana.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">🏆</span>
+          <span data-i18n="nav.week">Settimana</span>
+        </a>
+        <a href="dati-totali.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">📈</span>
+          <span data-i18n="nav.totals">Totali</span>
+        </a>
+      </nav>
+    </div>
+
+
+
+    <script src="i18n.js"></script>
+    <script src="catalog-i18n.js"></script>
+    <script src="users-db.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

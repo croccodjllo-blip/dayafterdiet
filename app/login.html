@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#0a2342" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <title>DaD — Accedi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="login" data-i18n-page-title="auth.loginPageTitle">
+    <div class="login-page login-page-simple">
+      <div class="login-shell">
+        <div class="login-lang-row">
+          <div
+            class="language-flags"
+            id="language-flags"
+            role="group"
+            data-i18n-aria="user.language"
+            aria-label="Lingua"
+          >
+            <button type="button" class="language-flag-btn" data-lang="it" aria-label="Italiano" title="Italiano">🇮🇹</button>
+            <button type="button" class="language-flag-btn" data-lang="en" aria-label="English" title="English">🇬🇧</button>
+            <button type="button" class="language-flag-btn" data-lang="es" aria-label="Español" title="Español">🇪🇸</button>
+          </div>
+        </div>
+
+        <header class="login-simple-brand">
+          <span class="brand-logo brand-logo-lg" aria-hidden="true">DaD</span>
+        </header>
+
+        <div class="login-card login-card-simple" id="auth-view">
+          <h2 class="login-form-title" id="auth-login-title" data-i18n="auth.loginTitle">Accedi</h2>
+
+          <p class="auth-error hidden" id="auth-error"></p>
+
+          <form id="login-form" class="auth-form login-auth-form">
+            <div class="field">
+              <label for="login-email" data-i18n="auth.email">Email</label>
+              <input
+                type="email"
+                id="login-email"
+                autocomplete="username"
+                data-i18n-placeholder="auth.emailPlaceholder"
+                placeholder="nome@email.it"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="login-password" data-i18n="auth.password">Password</label>
+              <input
+                type="password"
+                id="login-password"
+                autocomplete="current-password"
+                minlength="6"
+                data-i18n-placeholder="auth.passwordPlaceholder"
+                placeholder="Minimo 6 caratteri"
+                required
+              />
+            </div>
+            <p class="login-forgot-row" id="login-forgot-row">
+              <a href="reimposta-password.html" class="login-forgot-btn" id="forgot-password-link" data-i18n="auth.forgotPassword">
+                Password dimenticata?
+              </a>
+            </p>
+            <label class="login-remember">
+              <input type="checkbox" id="login-remember" name="remember" checked />
+              <span data-i18n="auth.remember">Ricordami</span>
+            </label>
+            <button type="submit" class="btn-primary btn-block login-submit" data-i18n="auth.submit">Accedi</button>
+          </form>
+
+          <p class="login-auth-switch" id="login-register-switch">
+            <span data-i18n="auth.noAccount">Non hai un account?</span>
+            <a href="registrati.html" id="register-page-link" data-i18n="auth.register">Registrati</a>
+          </p>
+
+          <p class="login-tutorial-link" id="login-tutorial-link">
+            <a href="tutorial.html" data-i18n="auth.tutorialLink">Guida rapida</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="catalog-i18n.js"></script>
+    <script src="users-db.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

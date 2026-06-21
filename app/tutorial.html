@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#0a2342" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <title>DaD — Guida</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="tutorial" data-i18n-page-title="tutorial.pageTitle">
+    <div class="login-page login-page-simple login-page-tutorial">
+      <div class="login-shell login-shell-wide">
+        <header class="login-simple-brand">
+          <span class="brand-logo brand-logo-lg" aria-hidden="true">DaD</span>
+        </header>
+
+        <article class="login-card login-card-simple tutorial-card">
+          <header class="tutorial-hero">
+            <h1 class="login-form-title" data-i18n="tutorial.title">Come usare DaD</h1>
+            <p class="tutorial-intro" data-i18n="tutorial.intro">
+              DaD (DayafterDiet) è il tuo diario alimentare e fitness: traccia calorie, macro, attività e misure corporee ogni giorno.
+            </p>
+          </header>
+
+          <nav class="tutorial-toc" aria-labelledby="tutorial-toc-title">
+            <h2 id="tutorial-toc-title" class="tutorial-toc-title" data-i18n="tutorial.tocTitle">Indice</h2>
+            <ol class="tutorial-toc-list">
+              <li><a href="#tutorial-start" data-i18n="tutorial.tocStart">Inizia</a></li>
+              <li><a href="#tutorial-today" data-i18n="tutorial.tocToday">Pagina Oggi</a></li>
+              <li><a href="#tutorial-food" data-i18n="tutorial.tocFood">Alimenti</a></li>
+              <li><a href="#tutorial-activity" data-i18n="tutorial.tocActivity">Attività fisica</a></li>
+              <li><a href="#tutorial-profile" data-i18n="tutorial.tocProfile">Profilo</a></li>
+              <li><a href="#tutorial-pages" data-i18n="tutorial.tocPages">Altre sezioni</a></li>
+              <li><a href="#tutorial-tips" data-i18n="tutorial.tocTips">Consigli utili</a></li>
+            </ol>
+          </nav>
+
+          <div class="tutorial-nav-map" aria-label="Mappa app">
+            <div class="tutorial-nav-item"><span aria-hidden="true">👤</span><strong data-i18n="nav.profile">Profilo</strong></div>
+            <div class="tutorial-nav-item"><span aria-hidden="true">📊</span><strong data-i18n="nav.overview">Riepilogo</strong></div>
+            <div class="tutorial-nav-item tutorial-nav-item-main"><span aria-hidden="true">⚡</span><strong data-i18n="nav.today">Oggi</strong></div>
+            <div class="tutorial-nav-item"><span aria-hidden="true">🎯</span><strong data-i18n="nav.tomorrow">Domani</strong></div>
+            <div class="tutorial-nav-item"><span aria-hidden="true">🏆</span><strong data-i18n="nav.week">Settimana</strong></div>
+            <div class="tutorial-nav-item"><span aria-hidden="true">📈</span><strong data-i18n="nav.totals">Totali</strong></div>
+          </div>
+
+          <div class="tutorial-sections">
+            <section class="tutorial-section" id="tutorial-start">
+              <div class="tutorial-section-head">
+                <span class="tutorial-icon" aria-hidden="true">🚀</span>
+                <h2 data-i18n="tutorial.startTitle">1. Inizia: account e accesso</h2>
+              </div>
+              <p class="tutorial-section-lead" data-i18n="tutorial.startLead">
+                Per usare DaD serve un account personale. I dati restano sul tuo dispositivo.
+              </p>
+              <ol class="tutorial-steps tutorial-steps-numbered">
+                <li data-i18n="tutorial.startStep1">Clicca Registrati dalla pagina di login e compila nome, email, password e dati fisici (età, altezza, peso, attività).</li>
+                <li data-i18n="tutorial.startStep2">DaD calcola automaticamente BMR, TDEE e il target calorico in base al tuo obiettivo dieta (mantenimento, dimagrimento, massa).</li>
+                <li data-i18n="tutorial.startStep3">Accedi con email e password. Spunta Ricordami per non reinserire le credenziali ogni volta.</li>
+                <li data-i18n="tutorial.startStep4">Scegli la lingua toccando le bandiere nella pagina di login — vale per tutta l'app.</li>
+              </ol>
+            </section>
+
+            <section class="tutorial-section" id="tutorial-today">
+              <div class="tutorial-section-head">
+                <span class="tutorial-icon" aria-hidden="true">⚡</span>
+                <h2 data-i18n="tutorial.todayTitle">2. Pagina Oggi — il cuore dell'app</h2>
+              </div>
+              <p class="tutorial-section-lead" data-i18n="tutorial.todayLead">
+                Oggi è la schermata principale: qui registri tutto ciò che succede nella giornata.
+              </p>
+              <ul class="tutorial-bullets">
+                <li data-i18n="tutorial.todayB1">Barra budget — in alto vedi quante calorie hai assunto, bruciato e quante ne restano rispetto al target.</li>
+                <li data-i18n="tutorial.todayB2">Misure corporee — aggiorna peso e circonferenze (vita, fianchi, petto, braccio, coscia). Il BMI si ricalcola da solo.</li>
+                <li data-i18n="tutorial.todayB3">Diario — in fondo trovi l'elenco di tutti gli alimenti e le attività registrati oggi, con possibilità di eliminarli.</li>
+                <li data-i18n="tutorial.todayB4">Azzera giornata — il pulsante in fondo cancella tutti i dati del giorno corrente (non lo storico).</li>
+              </ul>
+            </section>
+
+            <section class="tutorial-section" id="tutorial-food">
+              <div class="tutorial-section-head">
+                <span class="tutorial-icon" aria-hidden="true">🥗</span>
+                <h2 data-i18n="tutorial.foodTitle">3. Registrare gli alimenti</h2>
+              </div>
+              <p class="tutorial-section-lead" data-i18n="tutorial.foodLead">
+                Aggiungere un alimento richiede pochi secondi. Hai quattro modi:
+              </p>
+              <ol class="tutorial-steps tutorial-steps-numbered">
+                <li data-i18n="tutorial.foodStep1">I tuoi abituali — tocca un chip in alto per aggiungere subito un alimento che usi spesso (es. caffè, pasta, mela).</li>
+                <li data-i18n="tutorial.foodStep2">Dalla lista — cerca per nome, seleziona l'alimento dal menu a tendina, imposta i grammi: calorie e macro si aggiornano automaticamente.</li>
+                <li data-i18n="tutorial.foodStep3">Scansiona barcode — premi Scansiona codice a barre, inquadra il prodotto (o inserisci il codice manualmente): DaD recupera nome e valori nutrizionali da Open Food Facts.</li>
+                <li data-i18n="tutorial.foodStep4">Alimento personalizzato — scegli Altro, scrivi il nome e inserisci calorie e macro manualmente. Attiva Stima macro dalle calorie se preferisci il calcolo automatico.</li>
+              </ol>
+              <p class="tutorial-tip" data-i18n="tutorial.foodTip">
+                Suggerimento: modifica i grammi dopo la selezione — calorie e macro si adattano alla porzione.
+              </p>
+            </section>
+
+            <section class="tutorial-section" id="tutorial-activity">
+              <div class="tutorial-section-head">
+                <span class="tutorial-icon" aria-hidden="true">🏃</span>
+                <h2 data-i18n="tutorial.activityTitle">4. Attività fisica e lavoro</h2>
+              </div>
+              <p class="tutorial-section-lead" data-i18n="tutorial.activityLead">
+                Oltre al cibo, registra anche ciò che bruci durante la giornata.
+              </p>
+              <ul class="tutorial-bullets">
+                <li data-i18n="tutorial.activityB1">Sport — seleziona un'attività (corsa, palestra, nuoto…), imposta durata e intensità: le kcal bruciate si calcolano in base al tuo peso.</li>
+                <li data-i18n="tutorial.activityB2">Lavoro — attiva la sezione Lavoro per registrare le ore del tuo tipo di lavoro abituale (sedentario, in piedi, fisico).</li>
+                <li data-i18n="tutorial.activityB3">Abitudini — come per gli alimenti, le attività usate spesso compaiono come chip rapidi per un inserimento con un tap.</li>
+              </ul>
+            </section>
+
+            <section class="tutorial-section" id="tutorial-profile">
+              <div class="tutorial-section-head">
+                <span class="tutorial-icon" aria-hidden="true">👤</span>
+                <h2 data-i18n="tutorial.profileTitle">5. Profilo e obiettivi</h2>
+              </div>
+              <p class="tutorial-section-lead" data-i18n="tutorial.profileLead">
+                Dalla scheda Profilo (icona in alto o voce nel menu) gestisci i tuoi dati.
+              </p>
+              <ul class="tutorial-bullets">
+                <li data-i18n="tutorial.profileB1">Visualizza BMI, BMR, TDEE e target calorico calcolati per te.</li>
+                <li data-i18n="tutorial.profileB2">Modifica peso, altezza, età, livello di attività e tipo di lavoro — il target si aggiorna subito.</li>
+                <li data-i18n="tutorial.profileB3">Imposta l'obiettivo dieta: mantenimento, dimagrimento leggero/medio o aumento massa.</li>
+                <li data-i18n="tutorial.profileB4">Configura la ripartizione macro (proteine, carboidrati, grassi) e il giorno di inizio settimana.</li>
+              </ul>
+            </section>
+
+            <section class="tutorial-section" id="tutorial-pages">
+              <div class="tutorial-section-head">
+                <span class="tutorial-icon" aria-hidden="true">📊</span>
+                <h2 data-i18n="tutorial.pagesTitle">6. Riepilogo, Domani, Settimana e Totali</h2>
+              </div>
+              <div class="tutorial-page-cards">
+                <article class="tutorial-page-card">
+                  <h3 data-i18n="nav.overview">Riepilogo</h3>
+                  <p data-i18n="tutorial.pageOverview">Anello calorie e grafico macro del giorno corrente. Ideale per capire a colpo d'occhio se sei in surplus o deficit.</p>
+                </article>
+                <article class="tutorial-page-card">
+                  <h3 data-i18n="nav.tomorrow">Domani</h3>
+                  <p data-i18n="tutorial.pageTomorrow">Pianifica il menu di domani partendo da cosa hai mangiato oggi. Aggiungi alimenti al piano e controlla il totale calorico previsto.</p>
+                </article>
+                <article class="tutorial-page-card">
+                  <h3 data-i18n="nav.week">Settimana</h3>
+                  <p data-i18n="tutorial.pageWeek">Grafico a barre dei sette giorni con calorie assunte e bruciate. Confronta l'andamento e verifica la costanza.</p>
+                </article>
+                <article class="tutorial-page-card">
+                  <h3 data-i18n="nav.totals">Totali</h3>
+                  <p data-i18n="tutorial.pageTotals">Storico completo: peso, misure corporee e calorie nel tempo. Utile per monitorare i progressi a lungo termine.</p>
+                </article>
+              </div>
+            </section>
+
+            <section class="tutorial-section" id="tutorial-tips">
+              <div class="tutorial-section-head">
+                <span class="tutorial-icon" aria-hidden="true">💡</span>
+                <h2 data-i18n="tutorial.tipsTitle">7. Consigli per un uso efficace</h2>
+              </div>
+              <ul class="tutorial-bullets tutorial-bullets-check">
+                <li data-i18n="tutorial.tipsB1">Registra ogni pasto appena finisci di mangiare — non accumulare a fine giornata.</li>
+                <li data-i18n="tutorial.tipsB2">Pesa gli alimenti con una bilancia da cucina per porzioni più precise.</li>
+                <li data-i18n="tutorial.tipsB3">Aggiorna il peso corporeo una volta a settimana, sempre alla stessa ora.</li>
+                <li data-i18n="tutorial.tipsB4">Usa la pagina Domani la sera per preparare il piano del giorno dopo.</li>
+                <li data-i18n="tutorial.tipsB5">Attiva la prova gratuita di 3 giorni o l'abbonamento mensile dalla pagina di login per sbloccare tutte le funzioni.</li>
+              </ul>
+            </section>
+          </div>
+
+          <div class="tutorial-actions">
+            <a href="registrati.html" class="btn-primary btn-block" data-i18n="auth.register">Registrati</a>
+            <a href="login.html" class="btn-secondary btn-block" data-i18n="tutorial.backToLogin">Torna al login</a>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="catalog-i18n.js"></script>
+    <script src="users-db.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

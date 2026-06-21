@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#0a2342" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <title>DaD — Riepilogo settimanale</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="week" data-i18n-page-title="page.weekTitle">
+    <div class="app">
+      <header class="header">
+        <div class="brand">
+          <span class="brand-logo" aria-hidden="true">DaD</span>
+          <div>
+            <h1 data-i18n-page-heading="page.week">Settimana</h1>
+            <p class="subtitle" id="week-page-label">—</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <a href="utente.html" class="btn-icon btn-icon-link" id="profile-btn" data-i18n-title="nav.profile" title="Profilo">
+            <span class="profile-btn-avatar hidden" id="profile-btn-avatar" aria-hidden="true"></span>
+            <svg class="profile-btn-icon" id="profile-btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </a>
+        </div>
+      </header>
+
+      <main class="page-main page-main-week">
+      <section class="profile-banner hidden" id="profile-banner" data-i18n-aria="user.profileCard" aria-label="Scheda personale">
+        <div class="profile-banner-inner">
+          <div class="profile-banner-user">
+            <span class="profile-avatar" id="banner-avatar">?</span>
+            <div>
+              <p class="profile-banner-name" id="banner-name">—</p>
+              <p class="profile-banner-meta" id="banner-meta">—</p>
+            </div>
+          </div>
+          <div class="profile-banner-stats">
+            <div class="profile-stat-pill"><span>BMI</span><strong id="banner-bmi">—</strong></div>
+            <div class="profile-stat-pill"><span>TDEE</span><strong id="banner-tdee">—</strong></div>
+            <div class="profile-stat-pill"><span data-i18n="common.target">Target</span><strong id="banner-goal">—</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <details class="weekly-collapse weekly-summary-card" open>
+        <summary class="weekly-collapse-trigger weekly-summary-header">
+          <div class="weekly-collapse-heading">
+            <h2 id="weekly-summary-title" data-i18n="week.summary">Riepilogo settimanale</h2>
+            <p class="weekly-summary-subtitle" id="weekly-summary-subtitle" data-i18n="week.targetFormula">Target = obiettivo giornaliero × 7</p>
+          </div>
+          <div class="weekly-collapse-meta">
+            <span class="weekly-range" id="weekly-range">—</span>
+            <span class="weekly-collapse-chevron" aria-hidden="true"></span>
+          </div>
+        </summary>
+        <div class="weekly-collapse-body">
+          <div class="week-start-control">
+            <label class="week-start-label" for="week-start-day-picker" data-i18n="week.weekStart">Inizio settimana</label>
+            <select id="week-start-day-picker" class="week-start-select" data-i18n-aria="week.weekStartAria" aria-label="Giorno di inizio settimana">
+              <option value="1">Lunedì</option>
+            </select>
+          </div>
+          <div class="weekly-kpi-strip">
+            <div class="weekly-kpi">
+              <span class="weekly-kpi-label" data-i18n="common.target">Target</span>
+              <strong id="weekly-target">0 kcal</strong>
+              <span class="weekly-kpi-hint" data-i18n="week.sevenDays">7 giorni</span>
+            </div>
+            <div class="weekly-kpi weekly-kpi-featured">
+              <span class="weekly-kpi-label" data-i18n="common.consumed">Assunte</span>
+              <strong id="weekly-consumed">0 kcal</strong>
+              <span class="weekly-kpi-hint" data-i18n="week.totalWeek">totale settimana</span>
+            </div>
+            <div class="weekly-kpi">
+              <span class="weekly-kpi-label" data-i18n="common.remaining">Rimanenti</span>
+              <strong id="weekly-remaining">0 kcal</strong>
+              <span class="weekly-kpi-hint" data-i18n="week.available">disponibili</span>
+            </div>
+          </div>
+
+          <div class="weekly-metrics-row">
+            <div class="weekly-metric-pill">
+              <span data-i18n="week.effectiveBudget">Budget effettivo</span>
+              <strong id="weekly-budget">0 kcal</strong>
+            </div>
+            <div class="weekly-metric-pill">
+              <span data-i18n="common.burned">Bruciate</span>
+              <strong class="stat-exercise" id="weekly-burned">0 kcal</strong>
+            </div>
+          </div>
+
+          <div class="weekly-progress-block">
+            <div class="calorie-ring weekly-ring" id="weekly-ring" style="--progress: 0">
+              <div class="ring-inner">
+                <span class="ring-value" id="weekly-ring-value">0</span>
+                <span class="ring-label" data-i18n="week.consumedShort">assunte</span>
+              </div>
+            </div>
+            <div class="weekly-progress-content">
+              <div class="weekly-progress-label">
+                <span data-i18n="week.weeklyProgress">Progresso settimanale</span>
+                <span id="weekly-progress-percent">0%</span>
+              </div>
+              <div
+                class="progress-bar weekly-progress-bar"
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
+                id="weekly-progress-bar"
+              >
+                <div class="progress-fill" id="weekly-progress-fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <p class="progress-message weekly-message" id="weekly-message">—</p>
+        </div>
+      </details>
+
+      <details class="weekly-collapse weekly-activity-card">
+        <summary class="weekly-collapse-trigger weekly-nutrition-header">
+          <div class="weekly-chart-icon weekly-activity-icon" aria-hidden="true">🏃</div>
+          <div class="weekly-collapse-heading">
+            <h3 id="weekly-activity-title" data-i18n="today.sport">Attività fisica</h3>
+            <p class="weekly-nutrition-subtitle" data-i18n="week.activitySubtitle">Sport e movimento registrati nella settimana</p>
+          </div>
+          <span class="weekly-collapse-chevron" aria-hidden="true"></span>
+        </summary>
+        <div class="weekly-collapse-body">
+          <div class="weekly-kpi-strip weekly-activity-kpi">
+            <div class="weekly-kpi weekly-kpi-featured weekly-kpi-sport">
+              <span class="weekly-kpi-label" data-i18n="common.burned">Bruciate</span>
+              <strong id="weekly-sport-burned" class="stat-exercise">0 kcal</strong>
+              <span class="weekly-kpi-hint" data-i18n="week.sportHint">sport</span>
+            </div>
+            <div class="weekly-kpi">
+              <span class="weekly-kpi-label" data-i18n="week.sessions">Sessioni</span>
+              <strong id="weekly-sport-sessions">0</strong>
+              <span class="weekly-kpi-hint" data-i18n="week.totalWeek">totale settimana</span>
+            </div>
+            <div class="weekly-kpi">
+              <span class="weekly-kpi-label" data-i18n="common.duration">Durata</span>
+              <strong id="weekly-sport-duration">0 min</strong>
+              <span class="weekly-kpi-hint" data-i18n="week.activeTime">tempo attivo</span>
+            </div>
+          </div>
+          <div class="weekly-nutrition-section">
+            <h4 class="weekly-nutrition-section-title" data-i18n="week.byActivity">Per attività</h4>
+            <div class="weekly-activity-list" id="weekly-activity-list"></div>
+          </div>
+          <div class="weekly-nutrition-section weekly-activity-days-section">
+            <h4 class="weekly-nutrition-section-title" data-i18n="week.burnedPerDay">Kcal bruciate per giorno</h4>
+            <div class="weekly-activity-days" id="weekly-activity-days"></div>
+          </div>
+          <p class="weekly-activity-note" id="weekly-activity-note">—</p>
+        </div>
+      </details>
+
+      <details class="weekly-collapse weekly-nutrition-card">
+        <summary class="weekly-collapse-trigger weekly-nutrition-header">
+          <div class="weekly-chart-icon" aria-hidden="true">🥗</div>
+          <div class="weekly-collapse-heading">
+            <h3 id="weekly-nutrition-title" data-i18n="week.nutritionTitle">Nutrizione settimanale</h3>
+            <p class="weekly-nutrition-subtitle" data-i18n="week.nutritionSubtitle">Macro e micronutrienti stimati dagli alimenti registrati</p>
+          </div>
+          <span class="weekly-collapse-chevron" aria-hidden="true"></span>
+        </summary>
+        <div class="weekly-collapse-body">
+          <div class="weekly-nutrition-section">
+            <h4 class="weekly-nutrition-section-title" data-i18n="week.macro">Macro</h4>
+            <div class="macro-bars weekly-macro-bars" id="weekly-macro-bars"></div>
+          </div>
+          <div class="weekly-nutrition-section weekly-micro-panel">
+            <h4 class="weekly-nutrition-section-title" data-i18n="week.micronutrients">Micronutrienti</h4>
+            <div class="macro-bars weekly-micro-bars" id="weekly-micro-bars"></div>
+            <p class="weekly-micro-note" id="weekly-micro-note">—</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="weekly-collapse weekly-weight-card">
+        <summary class="weekly-collapse-trigger weekly-chart-head">
+          <div class="weekly-chart-icon weekly-weight-icon" aria-hidden="true">⚖️</div>
+          <div class="weekly-collapse-heading">
+            <h3 id="weekly-weight-title" data-i18n="week.bodyTrend">Andamento corporeo</h3>
+            <p class="weekly-chart-desc" data-i18n="week.bodyTrendDesc">Peso e misure corporee registrati giorno per giorno.</p>
+          </div>
+          <span class="weekly-collapse-chevron" aria-hidden="true"></span>
+        </summary>
+        <div class="weekly-collapse-body">
+          <div class="weekly-kpi-strip weekly-weight-kpi">
+            <div class="weekly-kpi weekly-kpi-featured weekly-kpi-weight">
+              <span class="weekly-kpi-label" data-i18n="week.currentWeight">Peso attuale</span>
+              <strong id="weekly-weight-current">—</strong>
+              <span class="weekly-kpi-hint" data-i18n="common.kg">kg</span>
+            </div>
+            <div class="weekly-kpi">
+              <span class="weekly-kpi-label" data-i18n="week.weightDelta">Δ peso</span>
+              <strong id="weekly-weight-delta">—</strong>
+              <span class="weekly-kpi-hint" data-i18n="week.weekLabel">settimana</span>
+            </div>
+            <div class="weekly-kpi">
+              <span class="weekly-kpi-label" data-i18n="week.recorded">Registrato</span>
+              <strong id="weekly-weight-days">0</strong>
+              <span class="weekly-kpi-hint" data-i18n="common.days">giorni</span>
+            </div>
+            <div class="weekly-kpi">
+              <span class="weekly-kpi-label" data-i18n="week.bodyMeasures">Misure corpo</span>
+              <strong id="weekly-measures-count">0</strong>
+              <span class="weekly-kpi-hint" data-i18n="week.measureTypes">tipi</span>
+            </div>
+          </div>
+          <div class="weekly-nutrition-section">
+            <h4 class="weekly-nutrition-section-title" data-i18n="body.weight">Peso</h4>
+            <div class="weekly-chart-wrap">
+              <div id="weekly-weight-chart"></div>
+            </div>
+          </div>
+          <div class="weekly-nutrition-section weekly-body-measures-section">
+            <h4 class="weekly-nutrition-section-title" data-i18n="week.bodyMeasures">Misure corpo</h4>
+            <div class="weekly-body-measures-summary" id="weekly-body-measures-summary"></div>
+            <div class="weekly-body-measures-lines" id="weekly-body-measures-lines"></div>
+            <div class="weekly-body-measures-charts" id="weekly-body-measures-charts"></div>
+          </div>
+          <p class="weekly-weight-note" id="weekly-weight-note">—</p>
+        </div>
+      </details>
+
+      <details class="weekly-collapse weekly-chart-card">
+        <summary class="weekly-collapse-trigger weekly-chart-head">
+          <div class="weekly-chart-icon" aria-hidden="true">📊</div>
+          <div class="weekly-collapse-heading">
+            <h3 id="weekly-chart-title" data-i18n="week.dailyTrend">Andamento giornaliero</h3>
+            <p class="weekly-chart-desc" data-i18n="week.dailyTrendDesc">Confronto tra calorie assunte e budget (obiettivo + attività).</p>
+          </div>
+          <span class="weekly-collapse-chevron" aria-hidden="true"></span>
+        </summary>
+        <div class="weekly-collapse-body">
+          <div class="weekly-chart-wrap">
+            <div id="weekly-chart"></div>
+          </div>
+          <div class="weekly-chart-legend">
+            <span class="legend-item"><span class="legend-swatch legend-budget"></span> <span data-i18n="common.budget">Budget</span></span>
+            <span class="legend-item"><span class="legend-swatch legend-consumed"></span> <span data-i18n="common.consumed">Assunte</span></span>
+            <span class="legend-item"><span class="legend-swatch legend-over"></span> <span data-i18n="week.overBudget">Sopra budget</span></span>
+          </div>
+        </div>
+      </details>
+
+      </main>
+
+      <nav class="bottom-nav bottom-nav-6" data-i18n-aria="nav.main" aria-label="Navigazione principale">
+        <a href="utente.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">👤</span>
+          <span data-i18n="nav.profile">Profilo</span>
+        </a>
+        <a href="riepilogo.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">📊</span>
+          <span data-i18n="nav.overview">Riepilogo</span>
+        </a>
+        <a href="index.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">⚡</span>
+          <span data-i18n="nav.today">Oggi</span>
+        </a>
+        <a href="domani.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">🎯</span>
+          <span data-i18n="nav.tomorrow">Domani</span>
+        </a>
+        <a href="settimana.html" class="bottom-nav-link active" aria-current="page">
+          <span class="bottom-nav-icon" aria-hidden="true">🏆</span>
+          <span data-i18n="nav.week">Settimana</span>
+        </a>
+        <a href="dati-totali.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">📈</span>
+          <span data-i18n="nav.totals">Totali</span>
+        </a>
+      </nav>
+    </div>
+
+
+
+    <script src="i18n.js"></script>
+    <script src="catalog-i18n.js"></script>
+    <script src="users-db.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

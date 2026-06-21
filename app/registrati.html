@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#0a2342" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <title>DaD — Registrati</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="register" data-i18n-page-title="auth.registerPageTitle">
+    <div class="login-page login-page-simple login-page-register">
+      <div class="login-shell login-shell-wide">
+        <header class="login-simple-brand">
+          <span class="brand-logo brand-logo-lg" aria-hidden="true">DaD</span>
+        </header>
+
+        <div class="login-card login-card-simple" id="auth-view">
+          <h2 class="login-form-title" data-i18n="auth.registerPageTitle">Registrati</h2>
+          <p class="login-form-subtitle" data-i18n="auth.registerSubtitle">Crea il tuo account e imposta la scheda personale.</p>
+
+          <p class="auth-error hidden" id="auth-error"></p>
+
+          <form id="register-form" class="auth-form login-auth-form">
+            <div class="field">
+              <label for="reg-name" data-i18n="user.name">Nome</label>
+              <input type="text" id="reg-name" data-i18n-placeholder="auth.namePlaceholder" placeholder="Il tuo nome" required />
+            </div>
+            <div class="field">
+              <label for="reg-email" data-i18n="auth.email">Email</label>
+              <input type="email" id="reg-email" autocomplete="username" data-i18n-placeholder="auth.emailPlaceholder" placeholder="nome@email.it" required />
+            </div>
+            <div class="field">
+              <label for="reg-password" data-i18n="auth.passwordMin">Password (min. 6 caratteri)</label>
+              <input type="password" id="reg-password" autocomplete="new-password" minlength="6" data-i18n-placeholder="auth.passwordChoose" placeholder="Scegli una password" required />
+            </div>
+            <div class="field-row field-row-3">
+              <div class="field">
+                <label for="reg-age" data-i18n="user.age">Età</label>
+                <input type="number" id="reg-age" min="14" max="100" placeholder="30" required />
+              </div>
+              <div class="field">
+                <label for="reg-sex" data-i18n="user.sex">Sesso</label>
+                <select id="reg-sex" required>
+                  <option value="m">M</option>
+                  <option value="f">F</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="reg-height" data-i18n="user.height">Altezza (cm)</label>
+                <input type="number" id="reg-height" min="120" max="230" placeholder="175" required />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="reg-weight" data-i18n="user.weightShort">Peso (kg)</label>
+                <input type="number" id="reg-weight" min="30" max="250" step="0.1" placeholder="70" required />
+              </div>
+              <div class="field">
+                <label for="reg-activity" data-i18n="user.activity">Attività</label>
+                <select id="reg-activity" required>
+                  <option value="sedentary">Sedentario</option>
+                  <option value="light">Leggero</option>
+                  <option value="moderate" selected>Moderato</option>
+                  <option value="active">Attivo</option>
+                  <option value="very">Molto attivo</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="reg-work-type" data-i18n="user.workType">Tipo di lavoro abituale</label>
+              <select id="reg-work-type" required></select>
+            </div>
+            <div class="field">
+              <label for="reg-diet-objective" data-i18n="diet.objective">Obiettivo dieta</label>
+              <select id="reg-diet-objective">
+                <option value="maintain">Mantenimento</option>
+                <option value="lose_light">Perdita leggera (−300 kcal)</option>
+                <option value="lose">Perdita peso (−500 kcal)</option>
+                <option value="gain">Aumento massa (+300 kcal)</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-primary btn-block login-submit" data-i18n="auth.createAccount">Crea account</button>
+          </form>
+
+          <p class="login-auth-switch">
+            <span data-i18n="auth.hasAccount">Hai già un account?</span>
+            <a href="login.html" id="login-page-link" data-i18n="auth.loginTitle">Accedi</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="catalog-i18n.js"></script>
+    <script src="users-db.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

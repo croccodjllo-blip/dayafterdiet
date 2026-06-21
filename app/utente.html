@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#0a2342" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <title>DaD — Profilo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="user" data-i18n-page-title="page.profileTitle">
+    <div class="app">
+      <header class="header">
+        <div class="brand">
+          <span class="brand-logo" aria-hidden="true">DaD</span>
+          <div>
+            <h1 data-i18n-page-heading="page.profile">Profilo</h1>
+            <p class="subtitle" id="user-page-label" data-i18n="user.accountGoals">Account e obiettivi</p>
+          </div>
+        </div>
+      </header>
+
+      <main class="page-main">
+        <section class="user-page-card hidden" id="user-profile-section" data-i18n-aria="user.profileCard" aria-label="Scheda personale">
+          <div class="profile-view-header">
+            <span class="profile-avatar profile-avatar-lg" id="profile-avatar">?</span>
+            <div>
+              <h2 class="user-section-title" id="profile-name">—</h2>
+              <p class="user-section-desc" id="profile-email">—</p>
+              <p class="profile-since" id="profile-since"></p>
+            </div>
+          </div>
+
+          <div class="profile-stats-grid">
+            <div class="profile-stat-card"><span>BMI</span><strong id="profile-bmi">—</strong></div>
+            <div class="profile-stat-card"><span>BMR</span><strong id="profile-bmr">—</strong></div>
+            <div class="profile-stat-card"><span>TDEE</span><strong id="profile-tdee">—</strong></div>
+            <div class="profile-stat-card"><span data-i18n="user.targetKcalShort">Target kcal</span><strong id="profile-goal">—</strong></div>
+            <div class="profile-stat-card profile-stat-card-wide profile-stat-card-work">
+              <span data-i18n="user.workBurned">Kcal bruciate (lavoro)</span>
+              <strong id="profile-work-total">0 kcal</strong>
+              <p class="profile-stat-sub" id="profile-work-meta">Oggi: 0 kcal · Storico: 0 kcal</p>
+            </div>
+          </div>
+
+          <div class="profile-measurements-block">
+            <h3 class="profile-form-title" data-i18n="body.title">Misure corporee</h3>
+            <div class="profile-measurements-display" id="profile-measurements-display" aria-live="polite"></div>
+          </div>
+
+          <form id="profile-edit-form" class="user-form">
+            <h3 class="profile-form-title" data-i18n="user.editProfile">Modifica scheda</h3>
+            <div class="field-row">
+              <div class="field">
+                <label for="edit-name" data-i18n="user.name">Nome</label>
+                <input type="text" id="edit-name" required />
+              </div>
+              <div class="field">
+                <label for="edit-weight" data-i18n="user.weightShort">Peso (kg)</label>
+                <input type="number" id="edit-weight" min="30" max="250" step="0.1" required />
+              </div>
+            </div>
+            <div class="field-row field-row-3">
+              <div class="field">
+                <label for="edit-age" data-i18n="user.age">Età</label>
+                <input type="number" id="edit-age" min="14" max="100" required />
+              </div>
+              <div class="field">
+                <label for="edit-height" data-i18n="user.height">Altezza (cm)</label>
+                <input type="number" id="edit-height" min="120" max="230" required />
+              </div>
+              <div class="field">
+                <label for="edit-sex" data-i18n="user.sex">Sesso</label>
+                <select id="edit-sex">
+                  <option value="m">M</option>
+                  <option value="f">F</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="edit-activity" data-i18n="user.activityLevel">Livello attività</label>
+                <select id="edit-activity">
+                  <option value="sedentary">Sedentario</option>
+                  <option value="light">Leggero</option>
+                  <option value="moderate">Moderato</option>
+                  <option value="active">Attivo</option>
+                  <option value="very">Molto attivo</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="edit-work-type" data-i18n="user.workType">Tipo di lavoro abituale</label>
+                <select id="edit-work-type"></select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="edit-diet-objective" data-i18n="diet.objective">Obiettivo dieta</label>
+              <select id="edit-diet-objective">
+                <option value="maintain">Mantenimento</option>
+                <option value="lose_light">Perdita leggera</option>
+                <option value="lose">Perdita peso</option>
+                <option value="gain">Aumento massa</option>
+              </select>
+            </div>
+
+            <fieldset class="body-measurements-fieldset">
+              <legend data-i18n="body.measurementsCm">Misure corporee (cm)</legend>
+              <div class="body-measurements-grid">
+                <div class="field">
+                  <label for="edit-waist" data-i18n="body.waist">Vita</label>
+                  <input type="number" id="edit-waist" min="40" max="200" step="0.1" placeholder="—" />
+                </div>
+                <div class="field">
+                  <label for="edit-hips" data-i18n="body.hips">Fianchi</label>
+                  <input type="number" id="edit-hips" min="50" max="200" step="0.1" placeholder="—" />
+                </div>
+                <div class="field">
+                  <label for="edit-chest" data-i18n="body.chest">Petto</label>
+                  <input type="number" id="edit-chest" min="50" max="200" step="0.1" placeholder="—" />
+                </div>
+                <div class="field">
+                  <label for="edit-arm" data-i18n="body.arm">Braccio</label>
+                  <input type="number" id="edit-arm" min="15" max="80" step="0.1" placeholder="—" />
+                </div>
+                <div class="field">
+                  <label for="edit-thigh" data-i18n="body.thigh">Coscia</label>
+                  <input type="number" id="edit-thigh" min="30" max="120" step="0.1" placeholder="—" />
+                </div>
+              </div>
+              <p class="field-hint" data-i18n="user.measurementsHint">Opzionali. Puoi aggiornarle anche dalla tab Oggi.</p>
+            </fieldset>
+
+            <p class="field-hint" id="profile-calc-note"></p>
+            <div class="user-form-actions">
+              <button type="button" class="btn-text" id="logout-btn" data-i18n="common.logout">Esci</button>
+              <button type="submit" class="btn-primary" data-i18n="user.saveProfile">Salva scheda</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="user-page-card" id="user-settings-section" aria-labelledby="user-settings-title">
+          <div class="user-section-head">
+            <h2 class="user-section-title" id="user-settings-title" data-i18n="user.goalsTitle">Obiettivi giornalieri</h2>
+            <p class="user-section-desc" data-i18n="user.goalsDesc">Calorie e macro target per oggi.</p>
+          </div>
+
+          <form id="settings-form" class="user-form">
+            <div class="field goal-field-auto">
+              <label for="goal-input" data-i18n="user.targetKcal">Calorie target (kcal)</label>
+              <input type="number" id="goal-input" min="500" max="10000" step="50" value="2000" readonly />
+              <p class="field-hint goal-calc-note" id="goal-calc-note" data-i18n="user.goalAutoNote">Calcolate automaticamente da scheda e obiettivo dieta.</p>
+            </div>
+            <div class="field">
+              <label for="diet-objective" data-i18n="diet.objective">Obiettivo dieta</label>
+              <select id="diet-objective" name="dietObjective">
+                <option value="maintain">Mantenimento</option>
+                <option value="lose_light">Perdita peso leggera (−300 kcal)</option>
+                <option value="lose">Perdita peso (−500 kcal)</option>
+                <option value="gain">Aumento massa (+300 kcal)</option>
+              </select>
+              <p class="field-hint" data-i18n="diet.objectiveHint">Modifica il target calorico giornaliero rispetto al TDEE.</p>
+            </div>
+            <div class="field">
+              <label for="weight-input" data-i18n="user.weightKg">Peso corporeo (kg)</label>
+              <input type="number" id="weight-input" min="30" max="250" step="0.5" value="70" required />
+              <p class="field-hint" data-i18n="user.weightHint">Usato per calcolare le calorie bruciate dall'attività fisica.</p>
+            </div>
+            <div class="field">
+              <label for="week-start-day" data-i18n="user.weekStart">Inizio settimana</label>
+              <select id="week-start-day" name="weekStartDay">
+                <option value="1">Lunedì</option>
+              </select>
+              <p class="field-hint" data-i18n="user.weekStartHint">Giorno da cui parte il riepilogo nella tab Settimana.</p>
+            </div>
+
+            <fieldset class="split-fieldset">
+              <legend data-i18n="user.macroSplit">Ripartizione macro (% delle calorie)</legend>
+              <div class="field-row field-row-3">
+                <div class="field">
+                  <label for="split-protein" data-i18n="macro.protein">Proteine</label>
+                  <input type="number" id="split-protein" min="0" max="100" step="1" value="30" />
+                </div>
+                <div class="field">
+                  <label for="split-carbs" data-i18n="macro.carbs">Carboidrati</label>
+                  <input type="number" id="split-carbs" min="0" max="100" step="1" value="40" />
+                </div>
+                <div class="field">
+                  <label for="split-fat" data-i18n="macro.fat">Grassi</label>
+                  <input type="number" id="split-fat" min="0" max="100" step="1" value="30" />
+                </div>
+              </div>
+              <p class="split-sum" id="split-sum">Totale: 100%</p>
+              <button type="button" class="btn-secondary btn-block" id="calc-macro-goals" data-i18n="user.calcMacros">Calcola obiettivi macro</button>
+            </fieldset>
+
+            <div class="field-row field-row-3">
+              <div class="field">
+                <label for="goal-protein-input" data-i18n="macro.protein">Proteine</label>
+                <input type="number" id="goal-protein-input" min="0" max="1000" step="1" value="150" />
+              </div>
+              <div class="field">
+                <label for="goal-carbs-input" data-i18n="macro.carbs">Carboidrati</label>
+                <input type="number" id="goal-carbs-input" min="0" max="1000" step="1" value="200" />
+              </div>
+              <div class="field">
+                <label for="goal-fat-input" data-i18n="macro.fat">Grassi</label>
+                <input type="number" id="goal-fat-input" min="0" max="1000" step="1" value="67" />
+              </div>
+            </div>
+
+            <p class="user-save-note hidden" id="settings-saved-note" role="status" data-i18n="user.goalsSaved">Obiettivi salvati.</p>
+
+            <div class="user-form-actions">
+              <button type="submit" class="btn-primary btn-block" data-i18n="user.saveGoals">Salva obiettivi</button>
+            </div>
+          </form>
+        </section>
+
+        <p class="privacy-footer-link">
+          <a href="privacy-policy.html">Informativa privacy</a>
+        </p>
+      </main>
+
+      <nav class="bottom-nav bottom-nav-6" data-i18n-aria="nav.main" aria-label="Navigazione principale">
+        <a href="utente.html" class="bottom-nav-link active" aria-current="page">
+          <span class="bottom-nav-icon" aria-hidden="true">👤</span>
+          <span data-i18n="nav.profile">Profilo</span>
+        </a>
+        <a href="riepilogo.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">📊</span>
+          <span data-i18n="nav.overview">Riepilogo</span>
+        </a>
+        <a href="index.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">⚡</span>
+          <span data-i18n="nav.today">Oggi</span>
+        </a>
+        <a href="domani.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">🎯</span>
+          <span data-i18n="nav.tomorrow">Domani</span>
+        </a>
+        <a href="settimana.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">🏆</span>
+          <span data-i18n="nav.week">Settimana</span>
+        </a>
+        <a href="dati-totali.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">📈</span>
+          <span data-i18n="nav.totals">Totali</span>
+        </a>
+      </nav>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="catalog-i18n.js"></script>
+    <script src="users-db.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

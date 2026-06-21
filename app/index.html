@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#0a2342" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <title>DaD — Calorie giornaliere</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="today" data-i18n-page-title="page.todayTitle">
+    <div class="app">
+      <header class="header">
+        <div class="brand">
+          <span class="brand-logo" aria-hidden="true">DaD</span>
+          <div>
+            <h1 data-i18n-page-heading="page.today">Oggi</h1>
+            <p class="subtitle" id="today-label">—</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <a href="utente.html" class="btn-icon btn-icon-link" id="profile-btn" data-i18n-title="nav.profile" title="Profilo">
+            <span class="profile-btn-avatar hidden" id="profile-btn-avatar" aria-hidden="true"></span>
+            <svg class="profile-btn-icon" id="profile-btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </a>
+        </div>
+      </header>
+
+      <main class="page-main">
+      <section class="profile-banner hidden" id="profile-banner" data-i18n-aria="user.profileCard" aria-label="Scheda personale">
+        <div class="profile-banner-inner">
+          <div class="profile-banner-user">
+            <span class="profile-avatar" id="banner-avatar">?</span>
+            <div>
+              <p class="profile-banner-name" id="banner-name">—</p>
+              <p class="profile-banner-meta" id="banner-meta">—</p>
+            </div>
+          </div>
+          <div class="profile-banner-stats">
+            <div class="profile-stat-pill"><span>BMI</span><strong id="banner-bmi">—</strong></div>
+            <div class="profile-stat-pill"><span>TDEE</span><strong id="banner-tdee">—</strong></div>
+            <div class="profile-stat-pill"><span data-i18n="common.target">Target</span><strong id="banner-goal">—</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="today-body-section" aria-labelledby="today-body-title">
+        <div class="today-body-panel">
+          <div class="today-body-header">
+            <h2 id="today-body-title" data-i18n="body.title">Misure corporee</h2>
+            <span class="today-weight-bmi" id="today-weight-bmi" aria-live="polite"></span>
+          </div>
+
+          <div class="today-body-weight-row">
+            <label class="body-measure-label" for="today-weight-input" data-i18n="body.weight">Peso</label>
+            <div class="today-weight-form">
+              <input
+                type="number"
+                id="today-weight-input"
+                class="today-weight-input"
+                min="30"
+                max="250"
+                step="0.1"
+                inputmode="decimal"
+              />
+              <span class="today-weight-suffix" data-i18n="common.kg">kg</span>
+            </div>
+          </div>
+
+          <div class="today-body-measure-grid">
+            <div class="body-measure-field">
+              <label class="body-measure-label" for="today-waist" data-i18n="body.waist">Vita</label>
+              <div class="body-measure-input-wrap">
+                <input type="number" id="today-waist" class="body-measure-input" min="40" max="200" step="0.1" inputmode="decimal" placeholder="—" />
+                <span class="body-measure-unit" data-i18n="common.cm">cm</span>
+              </div>
+            </div>
+            <div class="body-measure-field">
+              <label class="body-measure-label" for="today-hips" data-i18n="body.hips">Fianchi</label>
+              <div class="body-measure-input-wrap">
+                <input type="number" id="today-hips" class="body-measure-input" min="50" max="200" step="0.1" inputmode="decimal" placeholder="—" />
+                <span class="body-measure-unit" data-i18n="common.cm">cm</span>
+              </div>
+            </div>
+            <div class="body-measure-field">
+              <label class="body-measure-label" for="today-chest" data-i18n="body.chest">Petto</label>
+              <div class="body-measure-input-wrap">
+                <input type="number" id="today-chest" class="body-measure-input" min="50" max="200" step="0.1" inputmode="decimal" placeholder="—" />
+                <span class="body-measure-unit" data-i18n="common.cm">cm</span>
+              </div>
+            </div>
+            <div class="body-measure-field">
+              <label class="body-measure-label" for="today-arm" data-i18n="body.arm">Braccio</label>
+              <div class="body-measure-input-wrap">
+                <input type="number" id="today-arm" class="body-measure-input" min="15" max="80" step="0.1" inputmode="decimal" placeholder="—" />
+                <span class="body-measure-unit" data-i18n="common.cm">cm</span>
+              </div>
+            </div>
+            <div class="body-measure-field">
+              <label class="body-measure-label" for="today-thigh" data-i18n="body.thigh">Coscia</label>
+              <div class="body-measure-input-wrap">
+                <input type="number" id="today-thigh" class="body-measure-input" min="30" max="120" step="0.1" inputmode="decimal" placeholder="—" />
+                <span class="body-measure-unit" data-i18n="common.cm">cm</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="today-weight-note" id="today-weight-note">—</p>
+        </div>
+      </section>
+
+      <div class="page-block page-block-track">
+        <div class="page-block-head">
+          <h2 class="page-block-title" data-i18n="today.register">Registra</h2>
+          <p class="page-block-desc" data-i18n="today.registerDesc">Lavoro, alimenti e attività fisica</p>
+        </div>
+
+      <section class="work-toggle-section">
+        <div class="work-toggle-panel">
+          <div class="work-toggle-header">
+            <h2 data-i18n="today.work">Lavoro oggi</h2>
+            <span class="work-toggle-question" data-i18n="today.workQuestion">Hai lavorato?</span>
+          </div>
+          <div class="work-toggle-options" role="radiogroup" data-i18n-aria="today.workAria" aria-label="Hai lavorato oggi">
+            <label class="work-toggle-pill">
+              <input type="radio" name="worked-today" value="yes" />
+              <span data-i18n="common.yes">Sì</span>
+            </label>
+            <label class="work-toggle-pill">
+              <input type="radio" name="worked-today" value="no" checked />
+              <span data-i18n="common.no">No</span>
+            </label>
+          </div>
+          <p class="work-toggle-meta hidden" id="work-toggle-meta" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="add-section food-add-section">
+        <div class="food-add-panel">
+          <div class="panel-head">
+            <span class="panel-icon panel-icon-food" aria-hidden="true">🥗</span>
+            <h2 class="section-title" data-i18n="today.foods">Alimenti</h2>
+          </div>
+
+          <div class="food-quick-picker">
+            <p class="food-quick-label"><span data-i18n="today.habitual">I tuoi abituali</span> <span class="quick-hint">· <span data-i18n="today.habitualHint">registrati spesso</span></span></p>
+            <div class="food-quick-grid" id="quick-chips"></div>
+          </div>
+
+          <div class="food-divider" aria-hidden="true">
+            <span data-i18n="today.orList">oppure dalla lista</span>
+          </div>
+
+          <div class="food-scan-row">
+            <button type="button" class="btn-scan-barcode" id="food-scan-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M3 5v4h2V5h2V3H5a2 2 0 0 0-2 2zm0 10v4a2 2 0 0 0 2 2h2v-2H5v-4H3zM19 3h-2v2h2v2h2V5a2 2 0 0 0-2-2zm0 14h-2v2h2v2h2v-4h-2v2zM7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z" />
+              </svg>
+              <span data-i18n="scan.cta">Scansiona codice a barre</span>
+            </button>
+          </div>
+
+          <form id="add-form" class="food-add-form">
+            <div class="food-search-row">
+              <input
+                type="search"
+                id="food-search"
+                class="food-search-input"
+                data-i18n-placeholder="today.searchFood"
+                placeholder="Cerca alimento…"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="food-input-row">
+              <select id="food-type" name="foodType" class="food-select" required>
+                <option value="" disabled selected data-i18n="food.select">Seleziona alimento</option>
+              </select>
+              <input
+                type="text"
+                id="food-name"
+                name="name"
+                class="food-input-custom hidden"
+                data-i18n-placeholder="food.customName"
+                placeholder="Nome alimento"
+                autocomplete="off"
+              />
+              <div class="food-grams-group">
+                <label class="visually-hidden" for="food-grams" data-i18n="food.quantity">Quantità</label>
+                <input
+                  type="number"
+                  id="food-grams"
+                  name="grams"
+                  class="food-input-grams"
+                  min="1"
+                  max="5000"
+                  step="1"
+                  value="100"
+                  required
+                />
+                <span class="food-grams-suffix" id="food-grams-suffix" data-i18n="common.g">g</span>
+              </div>
+              <div class="food-calories-group">
+                <label class="visually-hidden" for="food-calories" data-i18n="common.calories">Calorie</label>
+                <input
+                  type="number"
+                  id="food-calories"
+                  name="calories"
+                  class="food-input-calories"
+                  min="0"
+                  max="10000"
+                  placeholder="0"
+                  required
+                />
+                <span class="food-calories-suffix" data-i18n="common.kcal">kcal</span>
+              </div>
+              <button type="submit" class="btn-add-food" data-i18n-aria="food.add" aria-label="Aggiungi alimento">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </button>
+            </div>
+
+            <details class="macro-details">
+              <summary data-i18n="today.macroOptions">Opzioni macro</summary>
+              <div class="macro-details-body">
+                <label class="toggle-row">
+                  <input type="checkbox" id="auto-macros" checked />
+                  <span data-i18n="today.estimateMacros">Stima macro dalle calorie</span>
+                </label>
+                <div class="macro-fields-grid hidden" id="macro-fields">
+                  <div class="field">
+                    <label for="food-protein" data-i18n="food.proteinShort">P (g)</label>
+                    <input type="number" id="food-protein" name="protein" min="0" max="1000" step="0.1" placeholder="0" />
+                  </div>
+                  <div class="field">
+                    <label for="food-carbs" data-i18n="food.carbsShort">C (g)</label>
+                    <input type="number" id="food-carbs" name="carbs" min="0" max="1000" step="0.1" placeholder="0" />
+                  </div>
+                  <div class="field">
+                    <label for="food-fat" data-i18n="food.fatShort">G (g)</label>
+                    <input type="number" id="food-fat" name="fat" min="0" max="1000" step="0.1" placeholder="0" />
+                  </div>
+                </div>
+                <p class="macro-preview" id="macro-preview"></p>
+              </div>
+            </details>
+          </form>
+        </div>
+      </section>
+
+      <section class="add-section activity-add-section">
+        <div class="activity-add-panel">
+          <div class="panel-head">
+            <span class="panel-icon panel-icon-sport" aria-hidden="true">🏃</span>
+            <h2 class="section-title" data-i18n="today.sport">Attività fisica</h2>
+          </div>
+
+          <div class="food-quick-picker">
+            <p class="food-quick-label"><span data-i18n="today.habitual">I tuoi abituali</span> <span class="quick-hint">· <span data-i18n="today.habitualHint">registrati spesso</span></span></p>
+            <div class="food-quick-grid" id="activity-chips"></div>
+          </div>
+
+          <div class="food-divider" aria-hidden="true">
+            <span data-i18n="today.orManual">oppure inserisci manualmente</span>
+          </div>
+
+          <form id="activity-form" class="activity-add-form">
+            <div class="activity-input-row">
+              <select id="activity-type" name="activityType" class="activity-select" required>
+                <option value="" disabled selected data-i18n="today.activity">Attività</option>
+              </select>
+              <input
+                type="text"
+                id="activity-name-custom"
+                name="customName"
+                class="activity-input-custom hidden"
+                data-i18n-placeholder="today.activityName"
+                placeholder="Nome attività"
+                autocomplete="off"
+              />
+              <div class="activity-duration-group">
+                <label class="visually-hidden" for="activity-duration" data-i18n="common.duration">Durata</label>
+                <input
+                  type="number"
+                  id="activity-duration"
+                  name="duration"
+                  class="activity-input-duration"
+                  min="1"
+                  max="600"
+                  value="30"
+                  required
+                />
+                <span class="activity-duration-suffix" data-i18n="common.min">min</span>
+              </div>
+              <div class="activity-calories-display" aria-live="polite">
+                <span class="activity-calories-value" id="activity-calories-value">0</span>
+                <span class="activity-calories-suffix" data-i18n="common.kcal">kcal</span>
+              </div>
+              <button type="submit" class="btn-add-activity" data-i18n-aria="today.registerActivity" aria-label="Registra attività">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="activity-intensity-row">
+              <span class="intensity-label" data-i18n="common.intensity">Intensità</span>
+              <div class="intensity-pills" role="radiogroup" data-i18n-aria="common.intensity" aria-label="Intensità">
+                <label class="intensity-pill">
+                  <input type="radio" name="sport-intensity" value="leggera" />
+                  <span data-i18n="intensity.leggera">Leggera</span>
+                </label>
+                <label class="intensity-pill">
+                  <input type="radio" name="sport-intensity" value="moderata" checked />
+                  <span data-i18n="intensity.moderata">Moderata</span>
+                </label>
+                <label class="intensity-pill">
+                  <input type="radio" name="sport-intensity" value="intensa" />
+                  <span data-i18n="intensity.intensa">Intensa</span>
+                </label>
+              </div>
+            </div>
+
+            <p class="activity-preview" id="activity-preview"></p>
+
+            <input type="hidden" id="activity-calories" name="calories" value="0" />
+          </form>
+        </div>
+      </section>
+      </div>
+
+      <div class="page-block page-block-lists">
+        <div class="page-block-head">
+          <h2 class="page-block-title" data-i18n="today.diary">Diario</h2>
+          <p class="page-block-desc" data-i18n="today.diaryDesc">Tutto ciò che hai registrato oggi</p>
+        </div>
+
+      <section class="meals-section">
+        <div class="meals-header">
+          <h2 data-i18n="today.mealsToday">Alimenti oggi</h2>
+          <span class="section-count" id="meals-count">0 alimenti</span>
+        </div>
+        <ul class="meals-list" id="meals-list"></ul>
+        <p class="empty-state" id="empty-state" data-i18n="today.noFoods">Nessun alimento registrato.</p>
+      </section>
+
+      <section class="activities-section">
+        <div class="meals-header">
+          <h2 data-i18n="today.activitiesToday">Attività fisica oggi</h2>
+          <span class="section-count" id="activities-count">0 attività</span>
+        </div>
+        <ul class="meals-list" id="activities-list"></ul>
+        <p class="empty-state" id="activities-empty" data-i18n="today.noActivities">Nessuna attività registrata.</p>
+      </section>
+
+      <div class="day-actions">
+        <button type="button" class="btn-text" id="reset-btn" data-i18n="today.resetDayBtn">Azzera giornata</button>
+      </div>
+      </div>
+      </main>
+
+      <nav class="bottom-nav bottom-nav-6" data-i18n-aria="nav.main" aria-label="Navigazione principale">
+        <a href="utente.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">👤</span>
+          <span data-i18n="nav.profile">Profilo</span>
+        </a>
+        <a href="riepilogo.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">📊</span>
+          <span data-i18n="nav.overview">Riepilogo</span>
+        </a>
+        <a href="index.html" class="bottom-nav-link active" aria-current="page">
+          <span class="bottom-nav-icon" aria-hidden="true">⚡</span>
+          <span data-i18n="nav.today">Oggi</span>
+        </a>
+        <a href="domani.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">🎯</span>
+          <span data-i18n="nav.tomorrow">Domani</span>
+        </a>
+        <a href="settimana.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">🏆</span>
+          <span data-i18n="nav.week">Settimana</span>
+        </a>
+        <a href="dati-totali.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">📈</span>
+          <span data-i18n="nav.totals">Totali</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="food-scanner-modal hidden" id="food-scanner-modal" role="dialog" aria-modal="true" aria-labelledby="food-scanner-title">
+      <div class="food-scanner-backdrop" id="food-scanner-backdrop"></div>
+      <div class="food-scanner-panel">
+        <div class="food-scanner-head">
+          <h3 id="food-scanner-title" data-i18n="scan.title">Scansiona prodotto</h3>
+          <button type="button" class="food-scanner-close" id="food-scanner-close" data-i18n-aria="scan.close" aria-label="Chiudi">×</button>
+        </div>
+        <div id="food-scanner-viewport" class="food-scanner-viewport"></div>
+        <p class="food-scanner-status" id="food-scanner-status" data-i18n="scan.hint">Inquadra il codice a barre del prodotto</p>
+        <details class="food-scanner-manual-details">
+          <summary data-i18n="scan.manual">Inserisci codice manualmente</summary>
+          <div class="food-scanner-manual-row">
+            <input type="text" id="food-barcode-manual" class="food-barcode-manual" inputmode="numeric" pattern="[0-9]*" data-i18n-placeholder="scan.manualPlaceholder" placeholder="Es. 8000500310427" />
+            <button type="button" class="btn-secondary" id="food-barcode-lookup" data-i18n="scan.lookupBtn">Cerca</button>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="catalog-i18n.js"></script>
+    <script src="users-db.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

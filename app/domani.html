@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#0a2342" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <title>DaD — Dieta di domani</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="tomorrow" data-i18n-page-title="page.tomorrowTitle">
+    <div class="app">
+      <header class="header">
+        <div class="brand">
+          <span class="brand-logo" aria-hidden="true">DaD</span>
+          <div>
+            <h1 data-i18n-page-heading="page.tomorrow">Dieta di domani</h1>
+            <p class="subtitle" id="tomorrow-page-label">—</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <a href="utente.html" class="btn-icon btn-icon-link" id="profile-btn" data-i18n-title="nav.profile" title="Profilo">
+            <span class="profile-btn-avatar hidden" id="profile-btn-avatar" aria-hidden="true"></span>
+            <svg class="profile-btn-icon" id="profile-btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </a>
+        </div>
+      </header>
+
+      <main class="page-main">
+      <section class="profile-banner hidden" id="profile-banner" data-i18n-aria="user.profileCard" aria-label="Scheda personale">
+        <div class="profile-banner-inner">
+          <div class="profile-banner-user">
+            <span class="profile-avatar" id="banner-avatar">?</span>
+            <div>
+              <p class="profile-banner-name" id="banner-name">—</p>
+              <p class="profile-banner-meta" id="banner-meta">—</p>
+            </div>
+          </div>
+          <div class="profile-banner-stats">
+            <div class="profile-stat-pill"><span>BMI</span><strong id="banner-bmi">—</strong></div>
+            <div class="profile-stat-pill"><span>TDEE</span><strong id="banner-tdee">—</strong></div>
+            <div class="profile-stat-pill"><span data-i18n="common.target">Target</span><strong id="banner-goal">—</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="today-context-card" aria-labelledby="today-context-title">
+        <h2 id="today-context-title" class="today-context-title" data-i18n="tomorrow.basedOnToday">Basato su oggi</h2>
+        <p class="card-subtitle" data-i18n="tomorrow.basedOnTodayDesc">Sintesi di oggi per calibrare il piano di domani</p>
+        <div class="today-context-stats">
+          <div class="today-context-stat">
+            <span class="today-context-label" data-i18n="common.consumed">Assunte</span>
+            <strong id="ctx-consumed">0 kcal</strong>
+          </div>
+          <div class="today-context-stat">
+            <span class="today-context-label" data-i18n="common.budget">Budget</span>
+            <strong id="ctx-budget">0 kcal</strong>
+          </div>
+          <div class="today-context-stat">
+            <span class="today-context-label" data-i18n="common.remaining">Rimanenti</span>
+            <strong id="ctx-remaining">0 kcal</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="tomorrow-section" aria-labelledby="tomorrow-title">
+        <div class="tomorrow-panel">
+          <div class="tomorrow-header">
+            <div>
+              <h2 id="tomorrow-title" data-i18n="tomorrow.plan">Piano alimentare</h2>
+              <p class="tomorrow-date" id="tomorrow-date">—</p>
+              <p class="card-subtitle tomorrow-plan-subtitle" data-i18n="tomorrow.planSubtitle">Suggerimenti basati sugli alimenti che selezioni e registri</p>
+            </div>
+            <div class="tomorrow-target-badge">
+              <span class="tomorrow-target-value" id="tomorrow-kcal">0</span>
+              <span class="tomorrow-target-label" data-i18n="tomorrow.kcalTarget">kcal target</span>
+            </div>
+          </div>
+          <p class="tomorrow-note" id="tomorrow-note"></p>
+          <div class="tomorrow-macros-row" id="tomorrow-macros"></div>
+          <ul class="tomorrow-meals" id="tomorrow-meals"></ul>
+          <p class="tomorrow-tip" id="tomorrow-tip"></p>
+        </div>
+      </section>
+
+      </main>
+
+      <nav class="bottom-nav bottom-nav-6" data-i18n-aria="nav.main" aria-label="Navigazione principale">
+        <a href="utente.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">👤</span>
+          <span data-i18n="nav.profile">Profilo</span>
+        </a>
+        <a href="riepilogo.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">📊</span>
+          <span data-i18n="nav.overview">Riepilogo</span>
+        </a>
+        <a href="index.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">⚡</span>
+          <span data-i18n="nav.today">Oggi</span>
+        </a>
+        <a href="domani.html" class="bottom-nav-link active" aria-current="page">
+          <span class="bottom-nav-icon" aria-hidden="true">🎯</span>
+          <span data-i18n="nav.tomorrow">Domani</span>
+        </a>
+        <a href="settimana.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">🏆</span>
+          <span data-i18n="nav.week">Settimana</span>
+        </a>
+        <a href="dati-totali.html" class="bottom-nav-link">
+          <span class="bottom-nav-icon" aria-hidden="true">📈</span>
+          <span data-i18n="nav.totals">Totali</span>
+        </a>
+      </nav>
+    </div>
+
+
+
+    <script src="i18n.js"></script>
+    <script src="catalog-i18n.js"></script>
+    <script src="users-db.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

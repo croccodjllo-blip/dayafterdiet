@@ -1,37 +1,28 @@
 # DaD — DayafterDiet
 
-Diario alimentare e fitness personale.
+Sito di presentazione e backend per **DaD (DayafterDiet)**.
 
 ## Struttura
 
 | Cartella / file | Contenuto |
 |-----------------|-----------|
-| `/` (root) | Sito web di presentazione (landing) |
-| `app/` | Web app DaD (diario, profilo, settimana, …) |
-| `mobile/` | Wrapper Android (Capacitor) per Google Play |
+| `/` (root) | Landing page (sito informativo) |
 | `server/` | Backend Stripe (hosting separato, es. Railway) |
+| `mobile/` | *(legacy)* wrapper Android — usa [dayafterdiet-app](https://github.com/croccodjllo-blip/dayafterdiet-app) |
+
+## Link
+
+- **Sito (landing):** https://croccodjllo-blip.github.io/dayafterdiet/
+- **App web:** https://croccodjllo-blip.github.io/dayafterdiet-app/
+- **Repo app:** https://github.com/croccodjllo-blip/dayafterdiet-app
 
 ## Anteprima locale
 
-**Landing:**
 ```bash
 python3 -m http.server 8080
 ```
+
 → http://localhost:8080
-
-**App:**
-```bash
-cd app && python3 -m http.server 8081
-```
-→ http://localhost:8081
-
-## Link online (GitHub Pages)
-
-- **Sito:** https://croccodjllo-blip.github.io/dayafterdiet/
-- **App:** https://croccodjllo-blip.github.io/dayafterdiet/app/
-- **Login:** https://croccodjllo-blip.github.io/dayafterdiet/app/login.html
-
-I vecchi URL alla root (es. `/login.html`) reindirizzano automaticamente in `app/`.
 
 ## Repository
 

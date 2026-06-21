@@ -3,7 +3,7 @@
   "appName": "DaD",
   "webDir": "www",
   "server": {
-    "url": "https://croccodjllo-blip.github.io/dayafterdiet/app/",
+    "url": "https://croccodjllo-blip.github.io/dayafterdiet-app/",
     "cleartext": false,
     "androidScheme": "https",
     "allowNavigation": [

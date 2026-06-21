@@ -660,9 +660,9 @@ body[data-page="user"] .language-flag-btn.is-active {
   display: block;
   width: 72px;
   height: 72px;
-  border-radius: 18px;
-  object-fit: cover;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+  border-radius: 0;
+  object-fit: contain;
+  box-shadow: none;
   user-select: none;
 }
 
@@ -1527,23 +1527,24 @@ body[data-page="reset-password"] .auth-error {
   display: block;
   width: 46px;
   height: 46px;
-  border-radius: 12px;
-  object-fit: cover;
+  border-radius: 0;
+  object-fit: contain;
   user-select: none;
 }
 
 .brand-logo-img {
   border: none;
   background: transparent;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .brand-logo-lg,
 .login-simple-brand .brand-logo-lg {
   width: 72px;
   height: 72px;
-  border-radius: 18px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .section-title {

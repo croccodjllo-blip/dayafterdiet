@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="DaD">
   <defs>
-    <linearGradient id="ring" x1="0%" y1="100%" x2="100%" y2="0%">
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#FFD54F"/>
-      <stop offset="45%" stop-color="#FF4081"/>
+      <stop offset="42%" stop-color="#FF4081"/>
       <stop offset="100%" stop-color="#00e676"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="112" fill="#0a2342"/>
-  <circle cx="256" cy="256" r="168" fill="none" stroke="url(#ring)" stroke-width="28" stroke-linecap="round" stroke-dasharray="820 180" transform="rotate(-90 256 256)"/>
-  <path fill="#FF4081" d="M318 168c-8 0-14 6-14 14v8c0 18 14 32 32 32h6v24h20v-24h6c18 0 32-14 32-32v-8c0-8-6-14-14-14h-68z"/>
-  <path fill="#FFD54F" d="M318 168c12-22 38-36 66-36 42 0 76 34 76 76 0 28-16 52-40 64l-10-18c8-4 14-12 14-22 0-14-12-26-26-26-8 0-15 3-20 8l-10-18z"/>
-  <path fill="#ffffff" d="M238 206h-48v72c0 18 14 32 32 32s32-14 32-32v-72h-16zm-16 16v56c0 9-7 16-16 16s-16-7-16-16v-56h48z"/>
+  <circle cx="256" cy="256" r="168" fill="none" stroke="url(#ring)" stroke-width="26" stroke-linecap="round" stroke-dasharray="800 200" transform="rotate(-90 256 256)"/>
+  <path fill="#ffffff" d="M214 178h-8c-14 0-24 10-24 24v92c0 22 18 40 40 40s40-18 40-40V202c0-14-10-24-24-24h-24zm16 24v68c0 9-7 16-16 16s-16-7-16-16v-68h32z"/>
+  <path fill="#FF4081" d="M298 292c0 34-28 62-62 62s-62-28-62-62 28-62 62-62c20 0 38 10 48 26l-18 10c-6-10-16-16-28-16-18 0-32 14-32 32s14 32 32 32c12 0 22-6 28-16l18 10c-10 16-28 26-48 26z"/>
+  <path fill="#FFD54F" d="M318 168c-6 0-10 4-10 10v6c0 14 11 25 25 25h4v18h14v-18h4c14 0 25-11 25-25v-6c0-6-4-10-10-10h-52z"/>
+  <path fill="#FF4081" d="M330 198c14-4 24-16 24-32 0-20-16-36-36-36-14 0-26 7-34 18l12 8c4-6 12-10 22-10 10 0 18 8 18 18 0 8-5 15-12 18l12 8c2-8 8-14 16-16z"/>
 </svg>

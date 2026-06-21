@@ -8,10 +8,6 @@ const REMEMBER_ME_KEY = "dayafterdiet-remember-me";
 const DEFAULT_GOAL = 2000;
 const DEFAULT_WEIGHT = 70;
 const DEFAULT_WEEK_START_DAY = 1;
-const SUBSCRIPTION_MONTHLY_PRICE = 4.99;
-const SUBSCRIPTION_TRIAL_DAYS = 3;
-const SUBSCRIPTION_MONTHLY_DAYS = 30;
-const PENDING_SUBSCRIPTION_KEY = "dayafterdiet-pending-sub";
 
 const LOCALE_STORAGE_KEY = "dayafterdiet-locale";
 const BODY_MEASUREMENT_KEYS = ["waist", "hips", "chest", "arm", "thigh"];
@@ -359,8 +355,9 @@ const CATEGORY_MICRO_PER_100G = {
 };
 
 const QUICK_FOODS = FOOD_CATALOG.filter((food) => food.quick);
-const DEFAULT_HABIT_ACTIVITIES = ["padel", "palestra", "corsa", "camminata", "ciclismo", "nuoto"];
+const DEFAULT_HABIT_ACTIVITIES = ["palestra", "corsa"];
 const HABITS_CHIP_LIMIT = 8;
+const HABITS_ACTIVITY_CHIP_LIMIT = 2;
 const HABIT_BADGE_MIN_USES = 2;
 
 const INTENSITY_LABELS = {
@@ -407,12 +404,10 @@ const NAV_PAGE_ICONS = {
   tomorrow: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M12 14v4"/><path d="M10 16h4"/></svg>`,
   week: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M7 14h2M11 14h2M15 14h2M7 17h2M11 17h2M15 17h2"/></svg>`,
   totals: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-9"/><path d="M17 5h4v4"/></svg>`,
-  payment: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>`,
 };
 
 const NAV_HREF_TO_PAGE = {
   "utente.html": "profile",
-  "pagamento.html": "payment",
   "riepilogo.html": "overview",
   "index.html": "today",
   "domani.html": "tomorrow",
@@ -516,9 +511,6 @@ const activityDurationInput = document.getElementById("activity-duration");
 const activityCaloriesValue = document.getElementById("activity-calories-value");
 const activityCaloriesHidden = document.getElementById("activity-calories");
 const activityPreviewEl = document.getElementById("activity-preview");
-const manualCaloriesCheckbox = document.getElementById("manual-calories");
-const manualCaloriesField = document.getElementById("manual-calories-field");
-const activityCaloriesManual = document.getElementById("activity-calories-manual");
 const resetBtn = document.getElementById("reset-btn");
 const quickChips = document.getElementById("quick-chips");
 const activityChips = document.getElementById("activity-chips");
@@ -595,7 +587,6 @@ const totalsWeightDeltaEl = document.getElementById("totals-weight-delta");
 const totalsWeightDaysEl = document.getElementById("totals-weight-days");
 const totalsBodyMeasuresEl = document.getElementById("totals-body-measures");
 const totalsBodyNoteEl = document.getElementById("totals-body-note");
-const totalsFoodsListEl = document.getElementById("totals-foods-list");
 const ctxConsumedEl = document.getElementById("ctx-consumed");
 const ctxBudgetEl = document.getElementById("ctx-budget");
 const ctxRemainingEl = document.getElementById("ctx-remaining");
@@ -646,6 +637,13 @@ function findSportActivityInCatalog({ activityId, name }) {
   return SPORT_ACTIVITIES.find((activity) => normalizeHabitName(activity.name) === normalized);
 }
 
+function resolveSportActivityFromHabitKey(key) {
+  if (!key) return null;
+  const byId = getActivityById(key);
+  if (byId?.category === "sport") return byId;
+  return findSportActivityInCatalog({ name: key });
+}
+
 function recordFoodHabit({ foodId, name, calories, protein, carbs, fat, grams, unit }) {
   const catalog = findFoodInCatalog({ foodId, name });
   const habits = loadHabits();
@@ -675,7 +673,10 @@ function recordActivityHabit({ activityId, name, category }) {
   if (!activity) return;
 
   const habits = loadHabits();
-  habits.activities[activity.id] = (habits.activities[activity.id] || 0) + 1;
+  const id = activity.id;
+  const previousUses = habits.activities[id] || habits.activities[activity.name] || 0;
+  habits.activities[id] = previousUses + 1;
+  if (activity.name !== id) delete habits.activities[activity.name];
   saveHabits(habits);
 }
 
@@ -725,42 +726,31 @@ function getHabitualActivityItems() {
   const items = [];
   const seen = new Set();
 
-  for (const [key, uses] of getTopHabitEntries(habits.activities, HABITS_CHIP_LIMIT)) {
-    const activity = getActivityById(key);
-    if (!activity || activity.category !== "sport") continue;
-    if (seen.has(activity.id)) continue;
+  for (const [key, uses] of getTopHabitEntries(habits.activities, HABITS_ACTIVITY_CHIP_LIMIT * 4)) {
+    const activity = resolveSportActivityFromHabitKey(key);
+    if (!activity || seen.has(activity.id)) continue;
     seen.add(activity.id);
     items.push({
       activity,
       uses,
       isHabitual: uses >= HABIT_BADGE_MIN_USES,
     });
+    if (items.length >= HABITS_ACTIVITY_CHIP_LIMIT) break;
   }
 
   for (const id of DEFAULT_HABIT_ACTIVITIES) {
-    if (items.length >= HABITS_CHIP_LIMIT) break;
+    if (items.length >= HABITS_ACTIVITY_CHIP_LIMIT) break;
     const activity = getActivityById(id);
     if (!activity || seen.has(activity.id)) continue;
     seen.add(activity.id);
     items.push({
       activity,
-      uses: habits.activities[activity.id] || 0,
-      isHabitual: (habits.activities[activity.id] || 0) >= HABIT_BADGE_MIN_USES,
+      uses: habits.activities[activity.id] || habits.activities[activity.name] || 0,
+      isHabitual: (habits.activities[activity.id] || habits.activities[activity.name] || 0) >= HABIT_BADGE_MIN_USES,
     });
   }
 
-  for (const activity of SPORT_ACTIVITIES) {
-    if (items.length >= HABITS_CHIP_LIMIT) break;
-    if (seen.has(activity.id)) continue;
-    seen.add(activity.id);
-    items.push({
-      activity,
-      uses: habits.activities[activity.id] || 0,
-      isHabitual: (habits.activities[activity.id] || 0) >= HABIT_BADGE_MIN_USES,
-    });
-  }
-
-  return items.slice(0, HABITS_CHIP_LIMIT);
+  return items.slice(0, HABITS_ACTIVITY_CHIP_LIMIT);
 }
 
 function formatLocalDateKey(date = new Date()) {
@@ -1069,8 +1059,6 @@ function saveLanguage(lang) {
     document.getElementById("reg-work-type"),
     document.getElementById("reg-work-type")?.value || inferWorkTypeFromActivityLevel(regActivitySelect?.value || "moderate")
   );
-  if (PAGE === "login") renderSubscriptionSection();
-  if (PAGE === "payment") renderPaymentSection();
   if (PAGE === "login" || PAGE === "register" || PAGE === "reset-password" || PAGE === "tutorial") {
     applyPageTranslations();
     return;
@@ -1577,20 +1565,6 @@ function computeTotalStats() {
     .sort((a, b) => b[1].count - a[1].count || b[1].calories - a[1].calories)
     .slice(0, 8);
 
-  const habits = loadHabits();
-  const topFoods = getTopHabitEntries(habits.foods, 10)
-    .map(([key, uses]) => {
-      const catalog = getFoodById(key);
-      const food = catalog || habits.customFoods[key];
-      if (!food) return null;
-      return {
-        name: food.name,
-        uses,
-        avgUses: avgPerDay(uses, sampleDays, 1),
-      };
-    })
-    .filter(Boolean);
-
   const topActivitiesAvg = topActivities.map(([name, data]) => [
     name,
     {
@@ -1600,7 +1574,7 @@ function computeTotalStats() {
     },
   ]);
 
-  return { ...totals, topActivities: topActivitiesAvg, topFoods, foodDays, activityDays, sampleDays };
+  return { ...totals, topActivities: topActivitiesAvg, foodDays, activityDays, sampleDays };
 }
 
 function getDataStorageKey(userId = getCurrentUserId()) {
@@ -1916,20 +1890,7 @@ function getLoginRedirectUrl() {
   return "utente.html";
 }
 
-function getSubscriptionGateUrl(forRedirect) {
-  const params = new URLSearchParams();
-  const redirect =
-    forRedirect || new URLSearchParams(window.location.search).get("redirect");
-  if (redirect && isSafeRedirect(redirect) && !redirect.startsWith("login.html")) {
-    params.set("redirect", redirect);
-  }
-  const query = params.toString();
-  return `login.html${query ? `?${query}` : ""}#abbonamento`;
-}
-
 function getPostAuthUrl() {
-  const user = getCurrentUser();
-  if (user && !isSubscriptionActive(user)) return getSubscriptionGateUrl();
   return getLoginRedirectUrl();
 }
 
@@ -1945,10 +1906,7 @@ function requireAuth() {
 }
 
 function requireSubscription() {
-  if (PAGE === "login" || PAGE === "register" || PAGE === "reset-password" || PAGE === "tutorial") return;
-  const user = getCurrentUser();
-  if (!user || isSubscriptionActive(user)) return;
-  window.location.replace(getSubscriptionGateUrl(getCurrentPagePath()));
+  /* Abbonamento non richiesto */
 }
 
 function isAuthPage() {
@@ -2112,9 +2070,8 @@ async function registerUser(formData) {
   reloadAppState();
   applyUserToAppState(user);
   updateProfileUI();
-  const checkoutStarted = await applyPendingSubscription();
   if (isAuthPage()) {
-    if (!checkoutStarted) redirectAfterAuth();
+    redirectAfterAuth();
     return;
   }
   profileDialog?.close();
@@ -2164,9 +2121,8 @@ async function loginUser(email, password, remember = true) {
   reloadAppState();
   applyUserToAppState(user);
   updateProfileUI();
-  const checkoutStarted = await applyPendingSubscription();
   if (isAuthPage()) {
-    if (!checkoutStarted) redirectAfterAuth();
+    redirectAfterAuth();
     return;
   }
   profileDialog?.close();
@@ -2466,11 +2422,6 @@ function updateFormTypeField(config) {
   }
 }
 
-function updateFormManualField(config) {
-  config.manualField.classList.toggle("hidden", !config.manualCheckbox.checked);
-  updateFormPreview(config);
-}
-
 function updateFormPreview(config) {
   const { isCustom, name, met, duration, intensity, type } = getFormInputs(config);
 
@@ -2481,12 +2432,7 @@ function updateFormPreview(config) {
     return;
   }
 
-  let calories;
-  if (config.manualCheckbox.checked && config.manualInput.value) {
-    calories = Number(config.manualInput.value);
-  } else {
-    calories = calcBurnedCalories(met, duration, intensity);
-  }
+  const calories = calcBurnedCalories(met, duration, intensity);
 
   const preset = isCustom ? null : getActivityById(type);
   const displayName = isCustom ? name : getActivityName(preset);
@@ -2643,10 +2589,8 @@ function resetForm(config) {
   config.typeSelect.value = "";
   config.durationInput.value = String(config.defaultDuration);
   setSelectedIntensity(config.form, config.intensityGroup, "moderata");
-  config.manualCheckbox.checked = false;
   config.nameCustom.value = "";
   updateFormTypeField(config);
-  updateFormManualField(config);
   updateFormPreview(config);
 }
 
@@ -2659,9 +2603,6 @@ const sportFormConfig = {
   caloriesValueEl: activityCaloriesValue,
   caloriesHidden: activityCaloriesHidden,
   previewEl: activityPreviewEl,
-  manualCheckbox: manualCaloriesCheckbox,
-  manualField: manualCaloriesField,
-  manualInput: activityCaloriesManual,
   intensityGroup: "sport-intensity",
   defaultDuration: 30,
 };
@@ -2698,8 +2639,6 @@ function initActivityForm(config) {
 
   config.nameCustom?.addEventListener("input", () => updateFormPreview(config));
   config.durationInput?.addEventListener("input", () => updateFormPreview(config));
-  config.manualInput?.addEventListener("input", () => updateFormPreview(config));
-  config.manualCheckbox?.addEventListener("change", () => updateFormManualField(config));
   config.form.querySelectorAll(`input[name="${config.intensityGroup}"]`).forEach((input) => {
     input.addEventListener("change", () => updateFormPreview(config));
   });
@@ -3671,7 +3610,6 @@ function renderTotalsPage() {
     lastWeight,
     measurementSeries,
     topActivities,
-    topFoods,
     foodDays,
     activityDays,
     sampleDays,
@@ -3898,26 +3836,6 @@ function renderTotalsPage() {
       parts.push(`${measurementSeries.length} misure corporee tracciate`);
     }
     totalsBodyNoteEl.textContent = parts.length ? parts.join(" · ") : "Registra peso e misure nella tab Oggi.";
-  }
-
-  if (totalsFoodsListEl) {
-    if (!topFoods.length) {
-      totalsFoodsListEl.innerHTML =
-        '<p class="weekly-activity-empty">Nessun alimento abituale ancora. Usa la lista alimenti in Oggi.</p>';
-    } else {
-      totalsFoodsListEl.innerHTML = topFoods
-        .map(
-          (food) => `
-            <div class="weekly-activity-row">
-              <div class="weekly-activity-row-info">
-                <span class="weekly-activity-name">${escapeHtml(getFoodName(food))}</span>
-                <span class="weekly-activity-meta">${food.avgUses}/giorno · ${food.uses} totali</span>
-              </div>
-            </div>
-          `
-        )
-        .join("");
-    }
   }
 }
 
@@ -4639,597 +4557,16 @@ function renderActivityChips() {
   activityChips.innerHTML = "";
 
   for (const { activity, isHabitual } of getHabitualActivityItems()) {
-    const duration = activity.defaultDuration || 30;
-    const calories = calcBurnedCalories(activity.met, duration, activity.defaultIntensity);
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = `food-quick-item activity-quick-item${isHabitual ? " food-quick-item-habitual" : ""}`;
     btn.innerHTML = `
       <span class="food-quick-name">${escapeHtml(getActivityName(activity))}</span>
-      ${isHabitual ? '<span class="food-quick-badge">' + t("habit.badge") + "</span>" : `<span class="food-quick-kcal">${calories} kcal</span>`}
+      ${isHabitual ? '<span class="food-quick-badge">' + t("habit.badge") + "</span>" : ""}
     `;
     btn.addEventListener("click", () => addQuickActivity(activity));
     activityChips.appendChild(btn);
   }
-}
-
-function isSubscriptionActive(user = getCurrentUser()) {
-  if (!user?.subscriptionPlan || !user?.subscriptionExpiresAt) return false;
-  return new Date(user.subscriptionExpiresAt) > new Date();
-}
-
-function getSubscriptionDaysLeft(user = getCurrentUser()) {
-  if (!isSubscriptionActive(user)) return 0;
-  const ms = new Date(user.subscriptionExpiresAt) - Date.now();
-  return Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
-}
-
-function formatSubscriptionDate(isoString) {
-  if (!isoString) return "—";
-  return new Date(isoString).toLocaleDateString(getLocaleTag(), {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-}
-
-function getStripeApiBase() {
-  return String(window.STRIPE_CONFIG?.apiBase || "http://localhost:4242").replace(/\/$/, "");
-}
-
-function getStripeCheckoutReturnPaths() {
-  if (PAGE === "payment") {
-    return {
-      successPath: "pagamento.html?checkout=success&session_id={CHECKOUT_SESSION_ID}",
-      cancelPath: "pagamento.html?checkout=cancelled",
-    };
-  }
-  return {
-    successPath: "login.html?checkout=success&session_id={CHECKOUT_SESSION_ID}",
-    cancelPath: "login.html?checkout=cancelled",
-  };
-}
-
-async function checkStripeApiAvailable() {
-  try {
-    const response = await fetch(`${getStripeApiBase()}/api/health`, { method: "GET" });
-    if (!response.ok) return false;
-    const data = await response.json();
-    return Boolean(data?.ok && data?.stripe);
-  } catch {
-    return false;
-  }
-}
-
-let stripeApiAvailable = null;
-
-async function refreshStripeApiStatus() {
-  stripeApiAvailable = await checkStripeApiAvailable();
-  return stripeApiAvailable;
-}
-
-function showPaymentStatusNote(message, type = "error") {
-  const noteEl = document.getElementById("profile-payment-status-note");
-  if (!noteEl) return;
-  if (!message) {
-    noteEl.textContent = "";
-    noteEl.classList.add("hidden");
-    noteEl.classList.remove("auth-success");
-    return;
-  }
-  noteEl.textContent = message;
-  noteEl.classList.remove("hidden", "auth-success");
-  if (type === "success") noteEl.classList.add("auth-success");
-}
-
-function cleanCheckoutQueryParams() {
-  const url = new URL(window.location.href);
-  if (!url.searchParams.has("checkout") && !url.searchParams.has("session_id")) return;
-  url.searchParams.delete("checkout");
-  url.searchParams.delete("session_id");
-  window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
-}
-
-async function applySubscriptionFromServer(data) {
-  const user = getCurrentUser();
-  if (!user || !data) return false;
-
-  const updated = {
-    ...user,
-    subscriptionPlan: data.subscriptionPlan || user.subscriptionPlan,
-    subscriptionExpiresAt: data.subscriptionExpiresAt || user.subscriptionExpiresAt,
-    stripeCustomerId: data.stripeCustomerId || user.stripeCustomerId || null,
-    stripeSubscriptionId: data.stripeSubscriptionId || user.stripeSubscriptionId || null,
-  };
-
-  if (!data.active && !data.subscriptionPlan) {
-    updated.subscriptionPlan = null;
-    updated.subscriptionExpiresAt = null;
-  }
-
-  await persistUser(updated);
-  usersById[user.id] = updated;
-  renderSubscriptionSection();
-  renderPaymentSection();
-  if (PAGE === "payment") {
-    void refreshPaymentMethod().then(() => renderPaymentSection());
-  }
-  return Boolean(data.active || data.subscriptionPlan);
-}
-
-async function syncSubscriptionFromServer() {
-  const user = getCurrentUser();
-  if (!user?.id) return;
-
-  try {
-    const response = await fetch(
-      `${getStripeApiBase()}/api/subscription/status?userId=${encodeURIComponent(user.id)}`
-    );
-    if (!response.ok) return;
-    const data = await response.json();
-    if (data.subscriptionPlan || data.stripeSubscriptionId || data.stripeCustomerId) {
-      await applySubscriptionFromServer(data);
-    }
-  } catch {
-    /* server offline or network error */
-  }
-}
-
-async function persistStripeCustomerId(customerId) {
-  const user = getCurrentUser();
-  if (!user || !customerId || user.stripeCustomerId === customerId) return;
-  const updated = { ...user, stripeCustomerId: customerId };
-  await persistUser(updated);
-  usersById[user.id] = updated;
-}
-
-async function startStripeCheckout(plan = "monthly") {
-  const user = getCurrentUser();
-  if (!user) return false;
-
-  const monthlyBtn =
-    document.getElementById("start-monthly-btn") || document.getElementById("profile-start-monthly-btn");
-  const originalLabel = monthlyBtn?.textContent;
-  if (monthlyBtn) {
-    monthlyBtn.disabled = true;
-    monthlyBtn.textContent = t("sub.checkoutProcessing");
-  }
-
-  const { successPath, cancelPath } = getStripeCheckoutReturnPaths();
-
-  try {
-    const response = await fetch(`${getStripeApiBase()}/api/create-checkout-session`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId: user.id,
-        email: user.email,
-        plan,
-        locale: getLanguage(),
-        successPath,
-        cancelPath,
-      }),
-    });
-
-    if (!response.ok) {
-      let errorCode = "checkout_failed";
-      try {
-        const payload = await response.json();
-        if (payload?.error) errorCode = payload.error;
-      } catch {
-        /* ignore */
-      }
-      throw new Error(errorCode);
-    }
-
-    const { url, stripeCustomerId } = await response.json();
-    if (stripeCustomerId) await persistStripeCustomerId(stripeCustomerId);
-    if (!url) throw new Error("missing_checkout_url");
-    window.location.href = url;
-    return true;
-  } catch (error) {
-    const code = error instanceof Error ? error.message : "checkout_failed";
-    if (code === "price_not_configured") {
-      alert(t("sub.stripePriceMissing"));
-    } else if (code === "invalid_stripe_keys") {
-      alert(t("sub.stripeConfigError"));
-    } else {
-      alert(t("sub.checkoutError"));
-    }
-    if (monthlyBtn) {
-      monthlyBtn.disabled = false;
-      monthlyBtn.textContent = originalLabel || t("sub.monthlyCta");
-    }
-    return false;
-  }
-}
-
-async function openStripeCustomerPortal(returnPath = "pagamento.html", flow = null) {
-  const user = getCurrentUser();
-  if (!user) return;
-
-  try {
-    const response = await fetch(`${getStripeApiBase()}/api/create-portal-session`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId: user.id,
-        email: user.email,
-        returnPath,
-        flow,
-      }),
-    });
-    if (!response.ok) throw new Error("portal_failed");
-    const { url, stripeCustomerId } = await response.json();
-    if (stripeCustomerId) await persistStripeCustomerId(stripeCustomerId);
-    if (!url) throw new Error("missing_portal_url");
-    window.location.href = url;
-  } catch {
-    alert(t("sub.portalError"));
-  }
-}
-
-async function openStripePaymentMethodPortal() {
-  return openStripeCustomerPortal("pagamento.html", "payment_method_update");
-}
-
-async function handleCheckoutReturn() {
-  const params = new URLSearchParams(window.location.search);
-  const checkoutState = params.get("checkout");
-
-  if (checkoutState === "cancelled") {
-    cleanCheckoutQueryParams();
-    alert(t("sub.checkoutCancelled"));
-    return;
-  }
-
-  if (checkoutState !== "success") return;
-
-  const sessionId = params.get("session_id");
-  const user = getCurrentUser();
-  cleanCheckoutQueryParams();
-
-  if (!sessionId || !user) return;
-
-  try {
-    const response = await fetch(
-      `${getStripeApiBase()}/api/checkout-session?session_id=${encodeURIComponent(sessionId)}&userId=${encodeURIComponent(user.id)}`
-    );
-    if (!response.ok) throw new Error("verify_failed");
-    const data = await response.json();
-    if (await applySubscriptionFromServer(data)) {
-      alert(t("sub.monthlyStarted"));
-      if (PAGE === "payment") {
-        await refreshPaymentMethod();
-        renderPaymentSection();
-      } else if (PAGE === "login" && getCurrentUserId()) {
-        window.location.href = getPostAuthUrl();
-      }
-    }
-  } catch {
-    alert(t("sub.checkoutVerifyError"));
-  }
-}
-
-async function activateSubscriptionTrial(silent = false) {
-  const user = getCurrentUser();
-  if (!user) return false;
-  if (user.trialUsed) {
-    if (!silent) alert(t("sub.trialUsed"));
-    return false;
-  }
-  if (isSubscriptionActive(user)) return false;
-
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + SUBSCRIPTION_TRIAL_DAYS);
-
-  const updated = {
-    ...user,
-    trialUsed: true,
-    subscriptionPlan: "trial",
-    subscriptionExpiresAt: expiresAt.toISOString(),
-  };
-  await persistUser(updated);
-  usersById[user.id] = updated;
-  if (!silent) alert(t("sub.trialStarted"));
-  renderSubscriptionSection();
-  renderPaymentSection();
-  if (isSubscriptionActive(updated) && (PAGE === "login" || isAuthPage())) {
-    redirectAfterAuth();
-  }
-  return true;
-}
-
-async function activateSubscriptionMonthly(silent = false) {
-  const user = getCurrentUser();
-  if (!user) return false;
-  if (isSubscriptionActive(user) && user.subscriptionPlan === "monthly") return false;
-  return startStripeCheckout("monthly");
-}
-
-function requestSubscriptionPlan(plan) {
-  const user = getCurrentUser();
-  if (!user) {
-    sessionStorage.setItem(PENDING_SUBSCRIPTION_KEY, plan);
-    alert(t("sub.loginToActivate"));
-    document.getElementById("login-email")?.focus();
-    return;
-  }
-  if (plan === "trial") activateSubscriptionTrial();
-  else activateSubscriptionMonthly();
-}
-
-async function applyPendingSubscription() {
-  const pending = sessionStorage.getItem(PENDING_SUBSCRIPTION_KEY);
-  if (!pending || !getCurrentUser()) return false;
-  sessionStorage.removeItem(PENDING_SUBSCRIPTION_KEY);
-  if (pending === "trial") {
-    await activateSubscriptionTrial(true);
-    return false;
-  }
-  if (pending === "monthly") {
-    return activateSubscriptionMonthly(true);
-  }
-  return false;
-}
-
-function renderSubscriptionSection() {
-  const section = document.getElementById("subscription-section");
-  if (!section) return;
-
-  const user = getCurrentUser();
-  const badge = document.getElementById("subscription-badge");
-  const activeBlock = document.getElementById("subscription-active");
-  const plansBlock = document.getElementById("subscription-plans");
-  const activePlanEl = document.getElementById("subscription-active-plan");
-  const activeExpiryEl = document.getElementById("subscription-active-expiry");
-  const noteEl = document.getElementById("subscription-note");
-  const trialBtn = document.getElementById("start-trial-btn");
-  const monthlyBtn = document.getElementById("start-monthly-btn");
-  const manageBtn = document.getElementById("subscription-manage-btn");
-
-  if (!user) {
-    badge?.classList.add("hidden");
-    activeBlock?.classList.add("hidden");
-    manageBtn?.classList.add("hidden");
-    plansBlock?.classList.remove("hidden");
-    trialBtn?.closest(".subscription-plan-trial")?.classList.remove("hidden");
-    if (trialBtn) trialBtn.disabled = false;
-    if (monthlyBtn) monthlyBtn.disabled = false;
-    const pending = sessionStorage.getItem(PENDING_SUBSCRIPTION_KEY);
-    if (noteEl) {
-      noteEl.textContent = pending
-        ? t("sub.pendingPlan", { plan: pending === "trial" ? t("sub.trialTitle") : t("sub.monthlyTitle") })
-        : t("sub.loginToActivate");
-    }
-    updateLoginPageSessionUI();
-    return;
-  }
-
-  const active = isSubscriptionActive(user);
-
-  badge?.classList.toggle("hidden", !active);
-  if (badge && active) badge.textContent = t("sub.active");
-
-  activeBlock?.classList.toggle("hidden", !active);
-  const isMonthlyActive = active && user.subscriptionPlan === "monthly";
-  plansBlock?.classList.toggle("hidden", isMonthlyActive);
-
-  if (active && activePlanEl && activeExpiryEl) {
-    activePlanEl.textContent =
-      user.subscriptionPlan === "trial" ? t("sub.trialActive") : t("sub.monthlyActive");
-    const daysLeft = getSubscriptionDaysLeft(user);
-    activeExpiryEl.textContent = `${t("sub.expires", { date: formatSubscriptionDate(user.subscriptionExpiresAt) })} · ${t("sub.daysLeft", { days: daysLeft })}`;
-  }
-
-  const trialCard = trialBtn?.closest(".subscription-plan-trial");
-  if (trialCard) trialCard.classList.toggle("hidden", isMonthlyActive || (active && user.subscriptionPlan === "trial"));
-
-  if (trialBtn) trialBtn.disabled = Boolean(user.trialUsed) || active;
-  if (monthlyBtn) {
-    monthlyBtn.disabled = isMonthlyActive;
-    monthlyBtn.textContent = t("sub.monthlyCta");
-  }
-
-  if (manageBtn) {
-    const showManage = isMonthlyActive && Boolean(user.stripeCustomerId || user.stripeSubscriptionId);
-    manageBtn.classList.toggle("hidden", !showManage);
-    manageBtn.textContent = t("sub.manageSubscription");
-  }
-
-  if (noteEl) {
-    const parts = [];
-    if (!active) parts.push(t("sub.required"));
-    if (user.trialUsed && !active) parts.push(t("sub.trialUsed"));
-    if (active || !parts.length) parts.push(t("sub.paymentNote"));
-    noteEl.textContent = parts.join(" ");
-  }
-
-  updateLoginPageSessionUI();
-}
-
-let cachedPaymentMethod = null;
-
-function formatPaymentMethodBrand(brand) {
-  const labels = {
-    visa: "Visa",
-    mastercard: "Mastercard",
-    amex: "American Express",
-    discover: "Discover",
-    diners: "Diners Club",
-    jcb: "JCB",
-    unionpay: "UnionPay",
-  };
-  return labels[String(brand || "").toLowerCase()] || String(brand || "Card");
-}
-
-function formatPaymentMethodSummary(paymentData) {
-  if (!paymentData?.hasPaymentMethod) return t("pay.noMethod");
-  if (paymentData.wallet === "google_pay") {
-    return t("pay.methodGooglePay", { last4: paymentData.last4 || "????" });
-  }
-  if (paymentData.wallet === "apple_pay") {
-    return t("pay.methodApplePay", { last4: paymentData.last4 || "????" });
-  }
-  return t("pay.methodDisplay", {
-    brand: formatPaymentMethodBrand(paymentData.brand),
-    last4: paymentData.last4 || "????",
-  });
-}
-
-async function refreshPaymentMethod() {
-  const user = getCurrentUser();
-  if (!user?.id || PAGE !== "payment") {
-    cachedPaymentMethod = null;
-    return null;
-  }
-
-  try {
-    const response = await fetch(
-      `${getStripeApiBase()}/api/payment-method?userId=${encodeURIComponent(user.id)}`
-    );
-    if (!response.ok) {
-      cachedPaymentMethod = null;
-      return null;
-    }
-    cachedPaymentMethod = await response.json();
-  } catch {
-    cachedPaymentMethod = null;
-  }
-  return cachedPaymentMethod;
-}
-
-function renderPaymentSection(paymentData = cachedPaymentMethod) {
-  const section = document.getElementById("profile-payment-section");
-  if (!section) return;
-
-  const user = getCurrentUser();
-  if (PAGE !== "payment") return;
-  if (!user) return;
-
-  const badge = document.getElementById("profile-payment-badge");
-  const planEl = document.getElementById("profile-payment-plan");
-  const expiryEl = document.getElementById("profile-payment-expiry");
-  const methodEl = document.getElementById("profile-payment-method");
-  const methodMetaEl = document.getElementById("profile-payment-method-meta");
-  const noteEl = document.getElementById("profile-payment-note");
-  const trialBtn = document.getElementById("profile-start-trial-btn");
-  const monthlyBtn = document.getElementById("profile-start-monthly-btn");
-  const managePaymentBtn = document.getElementById("profile-manage-payment-btn");
-  const manageSubBtn = document.getElementById("profile-manage-subscription-btn");
-
-  const active = isSubscriptionActive(user);
-  const isMonthlyActive = active && user.subscriptionPlan === "monthly";
-  const hasStripeCustomer = Boolean(user.stripeCustomerId || user.stripeSubscriptionId);
-  const stripeOnline = stripeApiAvailable !== false;
-
-  if (stripeApiAvailable === false) {
-    showPaymentStatusNote(t("pay.stripeOffline"));
-  } else {
-    showPaymentStatusNote("");
-  }
-
-  badge?.classList.toggle("hidden", !active);
-  if (badge && active) badge.textContent = t("sub.active");
-
-  if (planEl) {
-    if (!active) planEl.textContent = t("pay.noSubscription");
-    else if (user.subscriptionPlan === "trial") planEl.textContent = t("sub.trialActive");
-    else planEl.textContent = t("sub.monthlyActive");
-  }
-
-  if (expiryEl) {
-    if (!active) {
-      expiryEl.textContent = "—";
-    } else {
-      const daysLeft = getSubscriptionDaysLeft(user);
-      expiryEl.textContent = `${formatSubscriptionDate(user.subscriptionExpiresAt)} · ${t("sub.daysLeft", { days: daysLeft })}`;
-    }
-  }
-
-  if (methodEl) {
-    if (!stripeOnline) {
-      methodEl.textContent = "—";
-    } else if (hasStripeCustomer) {
-      methodEl.textContent = formatPaymentMethodSummary(paymentData);
-    } else {
-      methodEl.textContent = t("pay.methodUnavailable");
-    }
-  }
-
-  if (methodMetaEl) {
-    if (paymentData?.hasPaymentMethod && paymentData.expMonth && paymentData.expYear) {
-      methodMetaEl.textContent = t("pay.methodExpiry", {
-        month: String(paymentData.expMonth).padStart(2, "0"),
-        year: String(paymentData.expYear),
-      });
-      methodMetaEl.classList.remove("hidden");
-    } else {
-      methodMetaEl.textContent = "";
-      methodMetaEl.classList.add("hidden");
-    }
-  }
-
-  if (noteEl) {
-    const parts = [];
-    if (!active) parts.push(t("sub.required"));
-    if (user.trialUsed && !active) parts.push(t("sub.trialUsed"));
-    if (stripeOnline && (isMonthlyActive || hasStripeCustomer)) parts.push(t("sub.paymentNote"));
-    else if (active) parts.push(t("pay.trialPaymentHint"));
-    noteEl.textContent = parts.join(" ");
-  }
-
-  trialBtn?.classList.toggle("hidden", active || Boolean(user.trialUsed) || !stripeOnline);
-  if (trialBtn) trialBtn.disabled = Boolean(user.trialUsed) || active;
-
-  monthlyBtn?.classList.toggle("hidden", isMonthlyActive || !stripeOnline);
-  if (monthlyBtn) {
-    monthlyBtn.disabled = isMonthlyActive || !stripeOnline;
-    monthlyBtn.textContent = t("sub.monthlyCta");
-  }
-
-  const showManagePayment = stripeOnline && hasStripeCustomer;
-  const showManageSubscription = stripeOnline && isMonthlyActive && hasStripeCustomer;
-
-  managePaymentBtn?.classList.toggle("hidden", !showManagePayment);
-  manageSubBtn?.classList.toggle("hidden", !showManageSubscription);
-
-  if (managePaymentBtn) {
-    managePaymentBtn.textContent = paymentData?.hasPaymentMethod
-      ? t("pay.manageMethod")
-      : t("pay.addMethod");
-  }
-}
-
-function updateLoginPageSessionUI() {
-  if (PAGE !== "login") return;
-
-  const user = getCurrentUser();
-  const authView = document.getElementById("auth-view");
-  const subscriptionSection = document.getElementById("subscription-section");
-  const isCheckoutReturn = new URLSearchParams(window.location.search).has("checkout");
-  let gateBanner = document.getElementById("login-sub-gate");
-
-  if (user && !isCheckoutReturn) {
-    authView?.classList.add("hidden");
-    if (subscriptionSection && !gateBanner) {
-      gateBanner = document.createElement("div");
-      gateBanner.id = "login-sub-gate";
-      gateBanner.className = "login-sub-gate";
-      subscriptionSection.insertBefore(gateBanner, subscriptionSection.firstChild);
-    }
-    if (gateBanner) {
-      gateBanner.innerHTML = `
-        <p class="login-sub-gate-text">${escapeHtml(t("sub.loggedInAs", { email: user.email }))}</p>
-        <button type="button" class="btn-text login-sub-gate-logout">${escapeHtml(t("sub.switchAccount"))}</button>
-      `;
-      gateBanner.querySelector(".login-sub-gate-logout")?.addEventListener("click", logoutUser);
-    }
-    return;
-  }
-
-  authView?.classList.remove("hidden");
-  gateBanner?.remove();
 }
 
 function populateSettingsForm() {
@@ -5237,7 +4574,6 @@ function populateSettingsForm() {
   weightInput.value = state.weight;
   dietObjectiveSelect.value = state.dietObjective;
   populateWeekStartDaySelect(weekStartDaySelect, getWeekStartDay());
-  if (languageFlags) syncLanguageFlagButtons();
   splitProteinInput.value = state.split.protein;
   splitCarbsInput.value = state.split.carbs;
   splitFatInput.value = state.split.fat;
@@ -5265,28 +4601,6 @@ function renderUserPage() {
   populateSettingsForm();
 }
 
-function initPaymentPage() {
-  if (PAGE !== "payment") return;
-
-  renderPaymentSection();
-
-  void refreshStripeApiStatus().then(async (online) => {
-    if (online) {
-      await syncSubscriptionFromServer();
-      await refreshPaymentMethod();
-      await mountExpressCheckout();
-    }
-    renderPaymentSection();
-  });
-
-  document.getElementById("profile-start-trial-btn")?.addEventListener("click", () => requestSubscriptionPlan("trial"));
-  document.getElementById("profile-start-monthly-btn")?.addEventListener("click", () => requestSubscriptionPlan("monthly"));
-  document.getElementById("profile-manage-payment-btn")?.addEventListener("click", () => openStripePaymentMethodPortal());
-  document.getElementById("profile-manage-subscription-btn")?.addEventListener("click", () =>
-    openStripeCustomerPortal("pagamento.html")
-  );
-}
-
 function initUserPage() {
   if (PAGE !== "user") return;
 
@@ -5309,8 +4623,6 @@ function initUserPage() {
   if (window.location.hash === "#obiettivi") {
     document.getElementById("user-settings-section")?.scrollIntoView({ behavior: "smooth" });
   }
-
-  initLanguageFlags();
 }
 
 function syncLanguageFlagButtons() {
@@ -5394,10 +4706,6 @@ function render() {
 
   if (PAGE === "user") {
     renderUserPage();
-  }
-
-  if (PAGE === "payment") {
-    renderPaymentSection();
   }
 }
 
@@ -5843,13 +5151,12 @@ function initWeekPage() {
 }
 
 function initAuthLanguageSelect() {
+  if (PAGE !== "login") return;
   initLanguageFlags();
 }
 
 function initLoginPage() {
   if (PAGE !== "login") return;
-
-  const isCheckoutReturn = new URLSearchParams(window.location.search).has("checkout");
 
   initAuthLanguageSelect();
   wireAuthPageLinks();
@@ -5866,39 +5173,12 @@ function initLoginPage() {
     document.getElementById("login-password")?.focus();
   }
 
-  const wireSubscriptionButtons = () => {
-    document.getElementById("start-trial-btn")?.addEventListener("click", () => requestSubscriptionPlan("trial"));
-    document.getElementById("start-monthly-btn")?.addEventListener("click", () => requestSubscriptionPlan("monthly"));
-    document.getElementById("subscription-manage-btn")?.addEventListener("click", () =>
-      openStripeCustomerPortal("login.html#abbonamento")
-    );
-  };
-
   if (getCurrentUserId()) {
-    if (isCheckoutReturn) {
-      renderSubscriptionSection();
-      wireSubscriptionButtons();
-      return;
-    }
-    if (isSubscriptionActive(getCurrentUser())) {
-      redirectAfterAuth();
-      return;
-    }
-    renderSubscriptionSection();
-    wireSubscriptionButtons();
-    if (window.location.hash === "#abbonamento" || new URLSearchParams(window.location.search).has("redirect")) {
-      document.getElementById("subscription-section")?.scrollIntoView({ behavior: "smooth" });
-    }
+    redirectAfterAuth();
     return;
   }
 
   loadRememberLoginForm();
-  renderSubscriptionSection();
-  wireSubscriptionButtons();
-
-  if (window.location.hash === "#abbonamento") {
-    document.getElementById("subscription-section")?.scrollIntoView({ behavior: "smooth" });
-  }
 
   document.getElementById("login-remember")?.addEventListener("change", (event) => {
     if (event.target.checked) return;
@@ -5920,7 +5200,6 @@ function initRegisterPage() {
     inferWorkTypeFromActivityLevel(regActivitySelect?.value || "moderate")
   );
 
-  initAuthLanguageSelect();
   wireAuthPageLinks();
 }
 
@@ -5932,7 +5211,6 @@ function initResetPasswordPage() {
     return;
   }
 
-  initAuthLanguageSelect();
   wireAuthPageLinks();
 
   const params = new URLSearchParams(window.location.search);
@@ -5960,8 +5238,6 @@ async function bootstrapApp() {
 
   if (PAGE === "login") {
     initLoginPage();
-    await handleCheckoutReturn();
-    await syncSubscriptionFromServer();
     return;
   }
 
@@ -5976,20 +5252,15 @@ async function bootstrapApp() {
   }
 
   if (PAGE === "tutorial") {
-    initAuthLanguageSelect();
     return;
   }
 
   requireAuth();
-
-  await handleCheckoutReturn();
-  await syncSubscriptionFromServer();
   requireSubscription();
 
   initDayChangeMonitor();
   initTodayPage();
   initUserPage();
-  initPaymentPage();
   initWeekPage();
   render();
 }
@@ -6008,8 +5279,12 @@ function isInstalledMobileApp() {
   );
 }
 
+function isMobilePreviewMode() {
+  return new URLSearchParams(window.location.search).has("mobilePreview");
+}
+
 function initMobileAppShell() {
-  if (isInstalledMobileApp()) {
+  if (isInstalledMobileApp() || isMobilePreviewMode()) {
     document.documentElement.classList.add("mobile-app");
   }
 
@@ -6028,11 +5303,5 @@ function initMobileAppShell() {
       return;
     }
     cap.Plugins.App.minimizeApp();
-  });
-
-  cap.Plugins.App?.addListener?.("appStateChange", ({ isActive }) => {
-    if (isActive && PAGE !== "login" && PAGE !== "register" && PAGE !== "reset-password") {
-      void syncSubscriptionFromServer();
-    }
   });
 }

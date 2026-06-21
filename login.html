@@ -87,48 +87,12 @@
             <a href="tutorial.html" data-i18n="auth.tutorialLink">Guida rapida</a>
           </p>
         </div>
-
-        <section class="login-card subscription-section subscription-section-login" id="subscription-section" aria-labelledby="subscription-title">
-          <div class="subscription-head">
-            <div>
-              <h2 class="subscription-login-title" id="subscription-title" data-i18n="sub.title">Abbonamento</h2>
-              <p class="subscription-login-desc" data-i18n="sub.desc">Sblocca tutte le funzioni di DaD.</p>
-            </div>
-            <span class="subscription-status-badge hidden" id="subscription-badge"></span>
-          </div>
-
-          <div class="subscription-active hidden" id="subscription-active">
-            <p class="subscription-active-plan" id="subscription-active-plan"></p>
-            <p class="subscription-active-expiry" id="subscription-active-expiry"></p>
-            <button type="button" class="btn-text subscription-manage-btn hidden" id="subscription-manage-btn" data-i18n="sub.manageSubscription">Gestisci abbonamento</button>
-          </div>
-
-          <div class="subscription-plans" id="subscription-plans">
-            <article class="subscription-plan subscription-plan-trial">
-              <h3 class="subscription-plan-title" data-i18n="sub.trialTitle">Prova 3 giorni</h3>
-              <p class="subscription-plan-desc" data-i18n="sub.trialDesc">Accesso completo, gratis e senza impegno.</p>
-              <p class="subscription-plan-price subscription-plan-price-free" data-i18n="sub.trialPrice">Gratis</p>
-              <button type="button" class="btn-secondary btn-block" id="start-trial-btn" data-i18n="sub.trialCta">Inizia prova gratuita</button>
-            </article>
-
-            <article class="subscription-plan subscription-plan-monthly">
-              <span class="subscription-plan-badge" data-i18n="sub.recommended">Consigliato</span>
-              <h3 class="subscription-plan-title" data-i18n="sub.monthlyTitle">Mensile</h3>
-              <p class="subscription-plan-desc" data-i18n="sub.monthlyDesc">Rinnovo automatico ogni 30 giorni.</p>
-              <p class="subscription-plan-price"><span class="subscription-price-value">€4,99</span><span class="subscription-price-period" data-i18n="sub.perMonth">/mese</span></p>
-              <button type="button" class="btn-primary btn-block" id="start-monthly-btn" data-i18n="sub.monthlyCta">Abbonati a €4,99</button>
-            </article>
-          </div>
-
-          <p class="subscription-note field-hint" id="subscription-note"></p>
-        </section>
       </div>
     </div>
 
     <script src="i18n.js"></script>
     <script src="catalog-i18n.js"></script>
     <script src="users-db.js"></script>
-    <script src="stripe-config.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

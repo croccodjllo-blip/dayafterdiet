@@ -8,3 +8,5 @@ mobile/android/local.properties
 mobile/android/.gradle/
 mobile/android/build/
 mobile/android/app/build/
+mobile/dist/
+engineeringfactory/.git/

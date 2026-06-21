@@ -7,11 +7,7 @@
     "cleartext": false,
     "androidScheme": "https",
     "allowNavigation": [
-      "croccodjllo-blip.github.io",
-      "dayafterdiet-production.up.railway.app",
-      "checkout.stripe.com",
-      "billing.stripe.com",
-      "pay.google.com"
+      "croccodjllo-blip.github.io"
     ]
   },
   "android": {

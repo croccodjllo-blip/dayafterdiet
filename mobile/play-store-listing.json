@@ -1,7 +1,7 @@
 {
   "title": "DaD — Calorie e dieta",
   "shortDescription": "Traccia calorie, pasti e attività ogni giorno.",
-  "fullDescription": "DaD (DayafterDiet) ti aiuta a monitorare calorie, macro, pasti e attività fisica in modo semplice.\n\n• Diario alimentare giornaliero\n• Obiettivi personalizzati\n• Riepilogo settimanale e statistiche\n• Profilo con peso e misure\n• Abbonamento mensile con pagamento sicuro Stripe\n\nIdeale per chi vuole tenere sotto controllo l’alimentazione senza complicazioni.",
+  "fullDescription": "DaD (DayafterDiet) ti aiuta a monitorare calorie, macro, pasti e attività fisica in modo semplice.\n\n• Diario alimentare giornaliero\n• Obiettivi personalizzati\n• Riepilogo settimanale e statistiche\n• Profilo con peso e misure\n\nIdeale per chi vuole tenere sotto controllo l’alimentazione senza complicazioni.",
   "category": "HEALTH_AND_FITNESS",
   "privacyPolicyUrl": "https://croccodjllo-blip.github.io/dayafterdiet/privacy-policy.html",
   "websiteUrl": "https://croccodjllo-blip.github.io/dayafterdiet/",
@@ -10,7 +10,6 @@
   "contentRating": "Everyone or Teen (health app with user accounts)",
   "dataSafetyNotes": [
     "Email address (account)",
-    "Health and fitness data (meals, weight, calories — stored on device)",
-    "Payment info processed by Stripe (not stored in app)"
+    "Health and fitness data (meals, weight, calories — stored on device)"
   ]
 }

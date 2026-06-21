@@ -123,7 +123,7 @@
       <div class="page-block page-block-track">
         <div class="page-block-head">
           <h2 class="page-block-title" data-i18n="today.register">Registra</h2>
-          <p class="page-block-desc" data-i18n="today.registerDesc">Lavoro, attività fisica e alimenti</p>
+          <p class="page-block-desc" data-i18n="today.registerDesc">Lavoro, alimenti e attività fisica</p>
         </div>
 
       <section class="work-toggle-section">
@@ -143,100 +143,6 @@
             </label>
           </div>
           <p class="work-toggle-meta hidden" id="work-toggle-meta" aria-live="polite"></p>
-        </div>
-      </section>
-
-      <section class="add-section activity-add-section">
-        <div class="activity-add-panel">
-          <div class="panel-head">
-            <span class="panel-icon panel-icon-sport" aria-hidden="true">🏃</span>
-            <h2 class="section-title" data-i18n="today.sport">Attività fisica</h2>
-          </div>
-
-          <div class="food-quick-picker">
-            <p class="food-quick-label"><span data-i18n="today.habitual">I tuoi abituali</span> <span class="quick-hint">· <span data-i18n="today.habitualHint">registrati spesso</span></span></p>
-            <div class="food-quick-grid" id="activity-chips"></div>
-          </div>
-
-          <div class="food-divider" aria-hidden="true">
-            <span data-i18n="today.orManual">oppure inserisci manualmente</span>
-          </div>
-
-          <form id="activity-form" class="activity-add-form">
-            <div class="activity-input-row">
-              <select id="activity-type" name="activityType" class="activity-select" required>
-                <option value="" disabled selected data-i18n="today.activity">Attività</option>
-              </select>
-              <input
-                type="text"
-                id="activity-name-custom"
-                name="customName"
-                class="activity-input-custom hidden"
-                data-i18n-placeholder="today.activityName"
-                placeholder="Nome attività"
-                autocomplete="off"
-              />
-              <div class="activity-duration-group">
-                <label class="visually-hidden" for="activity-duration" data-i18n="common.duration">Durata</label>
-                <input
-                  type="number"
-                  id="activity-duration"
-                  name="duration"
-                  class="activity-input-duration"
-                  min="1"
-                  max="600"
-                  value="30"
-                  required
-                />
-                <span class="activity-duration-suffix" data-i18n="common.min">min</span>
-              </div>
-              <div class="activity-calories-display" aria-live="polite">
-                <span class="activity-calories-value" id="activity-calories-value">0</span>
-                <span class="activity-calories-suffix" data-i18n="common.kcal">kcal</span>
-              </div>
-              <button type="submit" class="btn-add-activity" data-i18n-aria="today.registerActivity" aria-label="Registra attività">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
-              </button>
-            </div>
-
-            <div class="activity-intensity-row">
-              <span class="intensity-label" data-i18n="common.intensity">Intensità</span>
-              <div class="intensity-pills" role="radiogroup" data-i18n-aria="common.intensity" aria-label="Intensità">
-                <label class="intensity-pill">
-                  <input type="radio" name="sport-intensity" value="leggera" />
-                  <span data-i18n="intensity.leggera">Leggera</span>
-                </label>
-                <label class="intensity-pill">
-                  <input type="radio" name="sport-intensity" value="moderata" checked />
-                  <span data-i18n="intensity.moderata">Moderata</span>
-                </label>
-                <label class="intensity-pill">
-                  <input type="radio" name="sport-intensity" value="intensa" />
-                  <span data-i18n="intensity.intensa">Intensa</span>
-                </label>
-              </div>
-            </div>
-
-            <p class="activity-preview" id="activity-preview"></p>
-
-            <details class="macro-details activity-details">
-              <summary data-i18n="today.manualCalories">Calorie manuali</summary>
-              <div class="macro-details-body">
-                <label class="toggle-row">
-                  <input type="checkbox" id="manual-calories" />
-                  <span data-i18n="today.manualCaloriesToggle">Inserisci calorie manualmente</span>
-                </label>
-                <div class="field hidden" id="manual-calories-field">
-                  <label for="activity-calories-manual" data-i18n="today.burnedCalories">Calorie bruciate (kcal)</label>
-                  <input type="number" id="activity-calories-manual" min="1" max="5000" placeholder="250" />
-                </div>
-              </div>
-            </details>
-
-            <input type="hidden" id="activity-calories" name="calories" value="0" />
-          </form>
         </div>
       </section>
 
@@ -353,6 +259,86 @@
           </form>
         </div>
       </section>
+
+      <section class="add-section activity-add-section">
+        <div class="activity-add-panel">
+          <div class="panel-head">
+            <span class="panel-icon panel-icon-sport" aria-hidden="true">🏃</span>
+            <h2 class="section-title" data-i18n="today.sport">Attività fisica</h2>
+          </div>
+
+          <div class="food-quick-picker">
+            <p class="food-quick-label"><span data-i18n="today.habitual">I tuoi abituali</span> <span class="quick-hint">· <span data-i18n="today.habitualHint">registrati spesso</span></span></p>
+            <div class="food-quick-grid" id="activity-chips"></div>
+          </div>
+
+          <div class="food-divider" aria-hidden="true">
+            <span data-i18n="today.orManual">oppure inserisci manualmente</span>
+          </div>
+
+          <form id="activity-form" class="activity-add-form">
+            <div class="activity-input-row">
+              <select id="activity-type" name="activityType" class="activity-select" required>
+                <option value="" disabled selected data-i18n="today.activity">Attività</option>
+              </select>
+              <input
+                type="text"
+                id="activity-name-custom"
+                name="customName"
+                class="activity-input-custom hidden"
+                data-i18n-placeholder="today.activityName"
+                placeholder="Nome attività"
+                autocomplete="off"
+              />
+              <div class="activity-duration-group">
+                <label class="visually-hidden" for="activity-duration" data-i18n="common.duration">Durata</label>
+                <input
+                  type="number"
+                  id="activity-duration"
+                  name="duration"
+                  class="activity-input-duration"
+                  min="1"
+                  max="600"
+                  value="30"
+                  required
+                />
+                <span class="activity-duration-suffix" data-i18n="common.min">min</span>
+              </div>
+              <div class="activity-calories-display" aria-live="polite">
+                <span class="activity-calories-value" id="activity-calories-value">0</span>
+                <span class="activity-calories-suffix" data-i18n="common.kcal">kcal</span>
+              </div>
+              <button type="submit" class="btn-add-activity" data-i18n-aria="today.registerActivity" aria-label="Registra attività">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="activity-intensity-row">
+              <span class="intensity-label" data-i18n="common.intensity">Intensità</span>
+              <div class="intensity-pills" role="radiogroup" data-i18n-aria="common.intensity" aria-label="Intensità">
+                <label class="intensity-pill">
+                  <input type="radio" name="sport-intensity" value="leggera" />
+                  <span data-i18n="intensity.leggera">Leggera</span>
+                </label>
+                <label class="intensity-pill">
+                  <input type="radio" name="sport-intensity" value="moderata" checked />
+                  <span data-i18n="intensity.moderata">Moderata</span>
+                </label>
+                <label class="intensity-pill">
+                  <input type="radio" name="sport-intensity" value="intensa" />
+                  <span data-i18n="intensity.intensa">Intensa</span>
+                </label>
+              </div>
+            </div>
+
+            <p class="activity-preview" id="activity-preview"></p>
+
+            <input type="hidden" id="activity-calories" name="calories" value="0" />
+          </form>
+        </div>
+      </section>
       </div>
 
       <div class="page-block page-block-lists">
@@ -360,15 +346,6 @@
           <h2 class="page-block-title" data-i18n="today.diary">Diario</h2>
           <p class="page-block-desc" data-i18n="today.diaryDesc">Tutto ciò che hai registrato oggi</p>
         </div>
-
-      <section class="activities-section">
-        <div class="meals-header">
-          <h2 data-i18n="today.activitiesToday">Attività fisica oggi</h2>
-          <span class="section-count" id="activities-count">0 attività</span>
-        </div>
-        <ul class="meals-list" id="activities-list"></ul>
-        <p class="empty-state" id="activities-empty" data-i18n="today.noActivities">Nessuna attività registrata.</p>
-      </section>
 
       <section class="meals-section">
         <div class="meals-header">
@@ -379,20 +356,25 @@
         <p class="empty-state" id="empty-state" data-i18n="today.noFoods">Nessun alimento registrato.</p>
       </section>
 
+      <section class="activities-section">
+        <div class="meals-header">
+          <h2 data-i18n="today.activitiesToday">Attività fisica oggi</h2>
+          <span class="section-count" id="activities-count">0 attività</span>
+        </div>
+        <ul class="meals-list" id="activities-list"></ul>
+        <p class="empty-state" id="activities-empty" data-i18n="today.noActivities">Nessuna attività registrata.</p>
+      </section>
+
       <div class="day-actions">
         <button type="button" class="btn-text" id="reset-btn" data-i18n="today.resetDayBtn">Azzera giornata</button>
       </div>
       </div>
       </main>
 
-      <nav class="bottom-nav bottom-nav-7" data-i18n-aria="nav.main" aria-label="Navigazione principale">
+      <nav class="bottom-nav bottom-nav-6" data-i18n-aria="nav.main" aria-label="Navigazione principale">
         <a href="utente.html" class="bottom-nav-link">
           <span class="bottom-nav-icon" aria-hidden="true">👤</span>
           <span data-i18n="nav.profile">Profilo</span>
-        </a>
-        <a href="pagamento.html" class="bottom-nav-link">
-          <span class="bottom-nav-icon" aria-hidden="true">💳</span>
-          <span data-i18n="nav.payment">Pagamento</span>
         </a>
         <a href="riepilogo.html" class="bottom-nav-link">
           <span class="bottom-nav-icon" aria-hidden="true">📊</span>

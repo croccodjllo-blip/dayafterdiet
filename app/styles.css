@@ -657,21 +657,12 @@ body[data-page="user"] .language-flag-btn.is-active {
 
 .login-simple-icon,
 .login-simple-brand .brand-logo-lg {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   width: 72px;
   height: 72px;
-  font-family: var(--font-display);
-  font-size: 1.65rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  color: var(--exercise);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(0, 176, 255, 0.4);
   border-radius: 18px;
-  box-shadow: 0 0 28px rgba(0, 176, 255, 0.35);
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
   user-select: none;
 }
 
@@ -1533,29 +1524,26 @@ body[data-page="reset-password"] .auth-error {
 .brand-icon,
 .brand-logo {
   flex-shrink: 0;
+  display: block;
   width: 46px;
   height: 46px;
-  display: grid;
-  place-items: center;
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  color: var(--exercise);
-  background: rgba(0, 176, 255, 0.14);
-  border: 2px solid rgba(0, 176, 255, 0.5);
   border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0, 176, 255, 0.28);
+  object-fit: cover;
   user-select: none;
 }
 
-.brand-logo-lg {
+.brand-logo-img {
+  border: none;
+  background: transparent;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+}
+
+.brand-logo-lg,
+.login-simple-brand .brand-logo-lg {
   width: 72px;
   height: 72px;
-  font-size: 1.65rem;
   border-radius: 18px;
-  box-shadow: 0 0 28px rgba(0, 176, 255, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
 }
 
 .section-title {
@@ -4785,7 +4773,6 @@ select:focus {
   .brand-logo {
     width: 40px;
     height: 40px;
-    font-size: 0.9375rem;
   }
 
   h1 {
